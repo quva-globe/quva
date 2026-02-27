@@ -3,165 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Blendr | Ultimate Ecosystem</title>
+    <title>Blendr | Ultimate App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- 1. BASE SETUP & DYNAMIC MOBILE FIX --- */
+        /* --- 1. BASE & THEME VARIABLES --- */
         :root {
-            --bg-deep: #08080c;
-            --card-bg: #121218;
-            --accent-pink: #ff2a7a;
-            --accent-cyan: #00e5ff;
-            --accent-yellow: #ffc107;
-            --text-main: #ffffff;
-            --text-muted: #8b8b99;
+            --bg-deep: #050508; --card-bg: #121218; --accent-pink: #ff2a7a; --accent-cyan: #00e5ff;
+            --text-main: #ffffff; --text-muted: #8b8b99; --wa-green: #25D366;
+            --chat-bg: #0a0a0f; --msg-sent: linear-gradient(135deg, #ff2a7a, #ff5e00); --msg-recv: #1e1e26;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* Dynamic Chat Themes */
+        .theme-ocean { --chat-bg: #001f3f; --msg-sent: linear-gradient(135deg, #00b4db, #0083b0); --msg-recv: #003366; }
+        .theme-cyber { --chat-bg: #0d0221; --msg-sent: linear-gradient(135deg, #8E2DE2, #4A00E0); --msg-recv: #260c40; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #000; display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
+        .app-container { width: 100%; max-width: 550px; height: 100%; background: var(--bg-deep); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* --- 2. SKELETON LOADING ANIMATIONS --- */
+        .skeleton { background: linear-gradient(90deg, #121218 25%, #1a1a24 50%, #121218 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 10px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
-        body { 
-            background-color: #000; 
-            display: flex; 
-            justify-content: center; 
-            /* 100dvh fixes the missing bottom nav on mobile browsers! */
-            height: 100dvh; 
-            overflow: hidden; 
-        }
+        .skel-card { display: flex; align-items: center; padding: 14px; gap: 15px; margin: 0 15px 12px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.02); }
+        .skel-avatar { width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0; }
+        .skel-line-1 { width: 60%; height: 16px; margin-bottom: 8px; }
+        .skel-line-2 { width: 40%; height: 12px; }
 
-        /* The Wider, Colorful App Container */
-        .app-container {
-            width: 100%;
-            max-width: 600px; /* Made wider for the pro feel */
-            height: 100%;
-            background-color: var(--bg-deep);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 0 30px rgba(0, 229, 255, 0.05);
-        }
-
-        /* --- 2. MAIN HEADER --- */
-        .glass-header {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
-            background: rgba(8, 8, 12, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 50;
-        }
-        .header-left { display: flex; align-items: center; gap: 15px; }
-        .menu-btn { font-size: 24px; cursor: pointer; color: var(--text-main); }
-        .brand h2 { font-size: 24px; font-weight: 800; font-style: italic; letter-spacing: 1px;}
-        .brand .dot { color: var(--accent-pink); }
-        .header-icons i { font-size: 22px; margin-left: 20px; cursor: pointer; color: var(--accent-cyan); }
-
-        /* --- 3. SCROLLABLE CONTENT AREA --- */
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px 20px 100px; /* 100px bottom padding ensures content isn't hidden by nav */
-            scrollbar-width: none;
-        }
+        /* --- 3. MAIN UI ELEMENTS (Headers, Nav, Sidebar) --- */
+        .glass-header { position: absolute; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(15px); z-index: 50; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .brand h2 { font-size: 22px; font-weight: 800; font-style: italic; color: white;} .brand .dot { color: var(--accent-pink); }
+        .content-area { flex: 1; overflow-y: auto; padding-top: 75px; padding-bottom: 90px; scrollbar-width: none; }
         .content-area::-webkit-scrollbar { display: none; }
 
-        /* Pages (Switching logic) */
-        .page { display: none; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Sidebar Overlay */
+        .sidebar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: absolute; top: 0; left: -300px; width: 280px; height: 100%; background: var(--card-bg); z-index: 201; transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; }
+        .sidebar.active { left: 0; }
 
-        /* --- 4. COLORFUL CHAT CARDS (Home Page) --- */
-        .chat-card {
-            display: flex; align-items: center; background: var(--card-bg); padding: 16px;
-            border-radius: 20px; gap: 15px; margin-bottom: 15px; cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.03);
-            position: relative; overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        /* Colorful glowing borders for cards */
-        .chat-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-            background: linear-gradient(to bottom, var(--accent-pink), var(--accent-cyan));
-        }
+        /* Bottom Nav */
+        .nav-wrapper { position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
+        .bottom-nav { width: 90%; max-width: 420px; background: rgba(18, 18, 24, 0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 15px 35px rgba(0,0,0,0.8); pointer-events: auto; }
+        .nav-item { color: var(--text-muted); font-size: 22px; padding: 8px; transition: 0.2s; position: relative; text-decoration: none;}
+        .nav-item.active { color: white; text-shadow: 0 0 15px rgba(255,255,255,0.4); }
 
-        .avatar { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; font-weight: bold; color: white; }
-        .av-1 { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
-        .av-2 { background: linear-gradient(135deg, #00b4db, #0083b0); }
+        /* --- 4. DATA FETCHING UI --- */
+        .sync-btn-container { padding: 20px; text-align: center; }
+        .sync-btn { background: linear-gradient(135deg, var(--accent-pink), var(--accent-cyan)); border: none; padding: 15px 30px; border-radius: 30px; color: white; font-size: 16px; font-weight: bold; cursor: pointer; box-shadow: 0 10px 20px rgba(0, 229, 255, 0.2); transition: 0.3s; width: 100%; }
+        .sync-btn:active { transform: scale(0.95); }
 
-        .chat-info { flex: 1; }
-        .chat-info h4 { font-size: 17px; margin-bottom: 5px; font-weight: 600; letter-spacing: 0.5px;}
-        .chat-info p { font-size: 14px; color: var(--accent-cyan); font-weight: 500; }
-        .chat-meta { color: var(--text-muted); font-size: 12px; font-weight: bold; }
+        .chat-list { display: flex; flex-direction: column; gap: 12px; padding: 0 15px; }
+        .chat-card { display: flex; align-items: center; padding: 14px; background: var(--card-bg); border-radius: 18px; gap: 15px; cursor: pointer; border: 1px solid rgba(255,255,255,0.03); transition: 0.2s; }
+        .chat-card:active { transform: scale(0.96); background: #1a1a24; }
+        .chat-avatar { width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; color: white; font-weight: bold; background: linear-gradient(135deg, #00B4DB, #0083B0); flex-shrink: 0; }
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-info h4 { font-size: 16px; color: white; margin-bottom: 4px; }
+        .chat-info p { font-size: 13px; color: var(--text-muted); }
 
-        /* --- 5. ACCOUNT PROFILE PAGE (From your screenshot) --- */
-        .profile-header { text-align: center; margin-bottom: 25px; margin-top: 10px;}
-        .profile-ring { 
-            width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--accent-yellow); 
-            display: flex; justify-content: center; align-items: center; margin: 0 auto 15px;
-            box-shadow: 0 0 20px rgba(255, 193, 7, 0.3); font-size: 40px; color: var(--accent-yellow);
-        }
-        .profile-name { font-size: 26px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;}
-        .role-badge { background: transparent; border: 1px solid var(--accent-yellow); color: var(--accent-yellow); padding: 4px 12px; border-radius: 15px; font-size: 12px; font-weight: bold; margin-top: 10px; display: inline-block;}
+        /* --- 5. THE ULTIMATE INTEGRATED CHAT BOX --- */
+        .chat-overlay { position: absolute; top: 0; left: 100%; width: 100%; height: 100%; background: var(--chat-bg); z-index: 300; transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; }
+        .chat-overlay.active { left: 0; }
         
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: var(--card-bg); padding: 20px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.02); }
-        .stat-box h3 { font-size: 28px; margin-bottom: 5px; }
-        .stat-box p { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; font-weight: bold; text-transform: uppercase;}
-
-        .ghost-mode-card {
-            background: var(--card-bg); padding: 18px 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.02); margin-bottom: 25px;
-        }
-        .ghost-info { display: flex; align-items: center; gap: 15px; }
-        .ghost-icon { width: 40px; height: 40px; background: rgba(138, 43, 226, 0.1); color: #b28dff; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .chat-header-left { display: flex; align-items: center; gap: 15px; color: white; }
+        .chat-header-left i { font-size: 20px; cursor: pointer; }
         
-        /* Custom Toggle Switch */
-        .toggle-switch { position: relative; width: 50px; height: 26px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--accent-pink); }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        /* --- 6. PERFECTED BOTTOM NAVIGATION --- */
-        .nav-wrapper {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 100;
-        }
-        .bottom-nav {
-            width: 92%;
-            max-width: 500px;
-            background: rgba(18, 18, 24, 0.95);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around; align-items: center; 
-            padding: 10px 15px; border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
-        }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; position: relative; }
+        .msg-wrapper { display: flex; flex-direction: column; max-width: 75%; position: relative; cursor: pointer; }
+        .msg-wrapper.received { align-self: flex-start; }
+        .msg-wrapper.sent { align-self: flex-end; align-items: flex-end; }
         
-        .nav-item { color: var(--text-muted); font-size: 22px; padding: 10px; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--text-main); }
-        .nav-item:hover { color: var(--accent-cyan); transform: translateY(-3px); }
+        .msg-bubble { padding: 12px 16px; border-radius: 20px; font-size: 15px; color: white; position: relative; line-height: 1.4; transition: 0.2s; }
+        .msg-wrapper.received .msg-bubble { background: var(--msg-recv); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .msg-wrapper.sent .msg-bubble { background: var(--msg-sent); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(255, 42, 122, 0.2); }
+        
+        /* Message Context Menu (Unsend/React) */
+        .msg-context-menu { position: absolute; top: -50px; background: rgba(30,30,40,0.95); backdrop-filter: blur(10px); padding: 8px 12px; border-radius: 15px; display: none; gap: 15px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 10; align-items: center; }
+        .msg-wrapper.active .msg-context-menu { display: flex; animation: fadeIn 0.2s ease; }
+        .react-btn { font-size: 20px; cursor: pointer; transition: 0.2s; } .react-btn:hover { transform: scale(1.3); }
+        .unsend-btn { color: #ff4c4c; font-size: 16px; cursor: pointer; margin-left: 10px; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 15px; }
 
-        /* The Profile Button (From screenshot) */
-        .profile-btn {
-            background: rgba(255, 42, 122, 0.1);
-            color: var(--accent-pink);
-            border: 1px solid var(--accent-pink);
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: bold;
-            display: flex; align-items: center; gap: 8px;
-            cursor: pointer; transition: 0.3s;
-        }
-        .profile-btn.active, .profile-btn:hover {
-            background: var(--accent-pink);
-            color: white;
-            box-shadow: 0 0 15px rgba(255, 42, 122, 0.4);
-        }
+        /* Floating Reaction Badge */
+        .reaction-badge { position: absolute; bottom: -10px; right: 10px; background: var(--card-bg); padding: 3px 6px; border-radius: 12px; font-size: 12px; border: 1px solid rgba(255,255,255,0.1); display: none; }
+        
+        /* Floating Chat Bar */
+        .chat-input-area { padding: 15px 20px; background: transparent; position: relative; }
+        .chat-input-wrapper { display: flex; align-items: center; background: rgba(20,20,25,0.8); backdrop-filter: blur(15px); padding: 8px 8px 8px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
+        .chat-input-wrapper input { flex: 1; background: transparent; border: none; outline: none; color: white; font-size: 15px; }
+        .send-btn { background: var(--msg-sent); width: 40px; height: 40px; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 16px; border: none; cursor: pointer; margin-left: 10px; transition: 0.2s; }
+        .send-btn:active { transform: scale(0.8); }
 
     </style>
 </head>
@@ -169,105 +101,252 @@
 
 <div class="app-container">
 
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        </div>
+
     <header class="glass-header">
         <div class="header-left">
-            <i class="fa-solid fa-bars menu-btn"></i>
+            <i class="fa-solid fa-bars menu-btn" style="color: white;" onclick="toggleSidebar()"></i>
             <div class="brand"><h2>Blendr<span class="dot">.</span></h2></div>
         </div>
         <div class="header-icons">
             <i class="fa-solid fa-camera"></i>
-            <i class="fa-regular fa-pen-to-square"></i>
         </div>
     </header>
 
-    <div class="content-area">
+    <main class="content-area">
         
-        <div class="page active" id="page-home">
-            <div class="chat-card">
-                <div class="avatar av-1">S</div>
-                <div class="chat-info">
-                    <h4>Sarah Connor</h4>
-                    <p>Typing... <i class="fa-solid fa-pen" style="font-size: 12px;"></i></p>
-                </div>
-                <div class="chat-meta">Just now</div>
-            </div>
-
-            <div class="chat-card">
-                <div class="avatar av-2"><i class="fa-solid fa-users"></i></div>
-                <div class="chat-info">
-                    <h4 style="color: white;">Global Network</h4>
-                    <p style="color: var(--text-muted);">Welcome to the ultimate hub...</p>
-                </div>
-                <div class="chat-meta">10:42 AM</div>
-            </div>
+        <div class="sync-btn-container" id="sync-container">
+            <button class="sync-btn" onclick="fetchRealContacts()">
+                <i class="fa-solid fa-address-book"></i> Sync Real Contacts
+            </button>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 15px;">
+                Browser will ask for permission. We only fetch locally.
+            </p>
         </div>
 
-        <div class="page" id="page-profile">
-            <div class="profile-header">
-                <div class="profile-ring"><i class="fa-solid fa-moon"></i></div>
-                <div class="profile-name">Loading... <i class="fa-solid fa-chevron-right" style="font-size: 16px; color: var(--text-muted);"></i></div>
-                <div class="role-badge">ROLE</div>
+        <div id="loading-skeletons" style="display: none;">
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <h3>0</h3>
-                    <p>Connections</p>
-                </div>
-                <div class="stat-box">
-                    <h3>0<span style="font-size: 18px; color: var(--text-muted);">h</span></h3>
-                    <p>Time Healed</p>
-                </div>
+        <div class="chat-list" id="real-contact-list">
             </div>
 
-            <div class="ghost-mode-card">
-                <div class="ghost-info">
-                    <div class="ghost-icon"><i class="fa-solid fa-ghost"></i></div>
-                    <div>
-                        <h4 style="font-size: 16px; margin-bottom: 3px;">Ghost Mode</h4>
-                        <p style="font-size: 13px; color: var(--text-muted);">Stealth online status.</p>
-                    </div>
-                </div>
-                <label class="toggle-switch">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                </label>
-            </div>
-            
-            <h4 style="color: var(--text-muted); font-size: 12px; letter-spacing: 1px; margin-bottom: 15px;">THE BASICS</h4>
-            </div>
-
-    </div>
+    </main>
 
     <div class="nav-wrapper">
         <nav class="bottom-nav">
-            <i class="fa-solid fa-house nav-item active" onclick="switchTab('page-home', this)"></i>
-            <i class="fa-regular fa-compass nav-item"></i>
-            <i class="fa-solid fa-user-group nav-item"></i>
-            <i class="fa-solid fa-comment nav-item"></i>
-            <div class="profile-btn" onclick="switchTab('page-profile', this)">
-                <i class="fa-regular fa-circle-user"></i> PROFILE
-            </div>
+            <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i></a>
+            <a href="#" class="nav-item"><i class="fa-regular fa-compass"></i></a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-play"></i></a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-user-group"></i></a>
+            <a href="#" class="nav-item"><i class="fa-regular fa-circle-user"></i></a>
         </nav>
+    </div>
+
+    <div class="chat-overlay" id="chatOverlay">
+        
+        <header class="chat-header">
+            <div class="chat-header-left">
+                <i class="fa-solid fa-arrow-left" onclick="closeChat()"></i>
+                <div>
+                    <h3 id="chatUserName" style="font-size: 16px;">User</h3>
+                    <p style="font-size: 12px; color: var(--accent-cyan);">Online</p>
+                </div>
+            </div>
+            <div style="color: white; font-size: 18px; display: flex; gap: 20px;">
+                <i class="fa-solid fa-palette" onclick="changeTheme()" title="Change Theme"></i>
+                <i class="fa-solid fa-phone"></i>
+            </div>
+        </header>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg-wrapper received" onclick="toggleContextMenu(this)">
+                <div class="msg-context-menu">
+                    <span class="react-btn" onclick="addReaction(this, '❤️')">❤️</span>
+                    <span class="react-btn" onclick="addReaction(this, '😂')">😂</span>
+                    <span class="react-btn" onclick="addReaction(this, '😮')">😮</span>
+                </div>
+                <div class="msg-bubble">
+                    Hey! Thanks for syncing your contacts.
+                    <div class="reaction-badge"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+                <i class="fa-solid fa-paperclip" style="color: var(--text-muted); font-size: 20px; margin-right: 15px;"></i>
+                <input type="text" id="msgInput" placeholder="Message..." autocomplete="off">
+                <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
 
 </div>
 
 <script>
-    function switchTab(pageId, clickedElement) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
-        // Remove active class from all nav items
-        document.querySelectorAll('.nav-item, .profile-btn').forEach(item => {
-            item.classList.remove('active');
-        });
+    function toggleSidebar() { document.getElementById('sidebarOverlay').classList.toggle('active'); document.getElementById('sidebar').classList.toggle('active'); }
 
-        // Show selected page and highlight selected icon
-        document.getElementById(pageId).classList.add('active');
-        clickedElement.classList.add('active');
+    // --- 1. REAL CONTACTS & SKELETON LOGIC ---
+    async function fetchRealContacts() {
+        const syncContainer = document.getElementById('sync-container');
+        const skeletonContainer = document.getElementById('loading-skeletons');
+        const contactList = document.getElementById('real-contact-list');
+
+        // Hide button, show skeletons
+        syncContainer.style.display = 'none';
+        skeletonContainer.style.display = 'block';
+        
+        // Generate Skeletons dynamically
+        skeletonContainer.innerHTML = Array(4).fill(`
+            <div class="skel-card skeleton">
+                <div class="skel-avatar skeleton"></div>
+                <div style="flex:1;">
+                    <div class="skel-line-1 skeleton"></div>
+                    <div class="skel-line-2 skeleton"></div>
+                </div>
+            </div>
+        `).join('');
+
+        try {
+            // Attempt to use the real Native Browser Contact API
+            const props = ['name', 'tel'];
+            const opts = { multiple: true };
+            
+            if ('contacts' in navigator && 'ContactsManager' in window) {
+                const contacts = await navigator.contacts.select(props, opts);
+                renderContacts(contacts);
+            } else {
+                // FALLBACK: If browser (like Safari/Desktop) denies the API, we simulate a successful database fetch to prove the UI works.
+                setTimeout(() => {
+                    const mockDBFetch = [
+                        { name: ["Alex Developer"], tel: ["+123456789"] },
+                        { name: ["Jordan Design"], tel: ["+987654321"] }
+                    ];
+                    renderContacts(mockDBFetch);
+                }, 1500); // Fake network delay for skeleton view
+            }
+        } catch (ex) {
+            alert("Permission denied or error fetching contacts.");
+            syncContainer.style.display = 'block';
+            skeletonContainer.style.display = 'none';
+        }
     }
+
+    function renderContacts(contacts) {
+        document.getElementById('loading-skeletons').style.display = 'none';
+        const contactList = document.getElementById('real-contact-list');
+        contactList.innerHTML = `<p style="color: var(--text-muted); font-size: 12px; margin-left: 10px;">FOUND ON BLENDR</p>`;
+        
+        if (!contacts.length) {
+            contactList.innerHTML += `<p style="color: white; text-align: center;">No contacts found.</p>`;
+            return;
+        }
+
+        contacts.forEach(c => {
+            const name = c.name ? c.name[0] : 'Unknown';
+            const initial = name.charAt(0).toUpperCase();
+            
+            // Generate a real clickable card that opens the chat overlay
+            contactList.innerHTML += `
+                <div class="chat-card" onclick="openChat('${name}')">
+                    <div class="chat-avatar">${initial}</div>
+                    <div class="chat-info">
+                        <h4>${name}</h4>
+                        <p>Tap to chat securely</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // --- 2. CHAT OVERLAY LOGIC ---
+    const chatOverlay = document.getElementById('chatOverlay');
+    const chatUserName = document.getElementById('chatUserName');
+    
+    function openChat(name) {
+        chatUserName.textContent = name;
+        chatOverlay.classList.add('active');
+    }
+    function closeChat() {
+        chatOverlay.classList.remove('active');
+    }
+
+    // --- 3. INSTAGRAM / TELEGRAM CHAT FEATURES ---
+    
+    // Feature 1: Send Message
+    function sendMessage() {
+        const input = document.getElementById('msgInput');
+        const text = input.value.trim();
+        if(!text) return;
+
+        const chatBox = document.getElementById('chatMessages');
+        
+        // Build the message HTML with the Context Menu built-in
+        const newMsg = document.createElement('div');
+        newMsg.className = 'msg-wrapper sent';
+        newMsg.setAttribute('onclick', 'toggleContextMenu(this)');
+        newMsg.innerHTML = `
+            <div class="msg-context-menu">
+                <span class="unsend-btn" onclick="unsendMessage(this)"><i class="fa-solid fa-trash"></i> Unsend</span>
+            </div>
+            <div class="msg-bubble">
+                ${text}
+                <div class="reaction-badge"></div>
+            </div>
+        `;
+        
+        chatBox.appendChild(newMsg);
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll
+    }
+
+    // Feature 2: Toggle Context Menu (Click bubble to show Unsend/React)
+    function toggleContextMenu(element) {
+        // Close others first
+        document.querySelectorAll('.msg-wrapper').forEach(el => {
+            if(el !== element) el.classList.remove('active');
+        });
+        element.classList.toggle('active');
+    }
+
+    // Feature 3: Instagram-style Reactions
+    function addReaction(btnElement, emoji) {
+        event.stopPropagation(); // Stop from toggling menu
+        const msgWrapper = btnElement.closest('.msg-wrapper');
+        const badge = msgWrapper.querySelector('.reaction-badge');
+        
+        badge.textContent = emoji;
+        badge.style.display = 'block';
+        msgWrapper.classList.remove('active'); // hide menu
+    }
+
+    // Feature 4: Unsend Feature
+    function unsendMessage(btnElement) {
+        event.stopPropagation();
+        const msgWrapper = btnElement.closest('.msg-wrapper');
+        // Cool animation before deleting
+        msgWrapper.style.transition = "0.3s";
+        msgWrapper.style.transform = "scale(0)";
+        msgWrapper.style.opacity = "0";
+        setTimeout(() => msgWrapper.remove(), 300);
+    }
+
+    // Feature 5: Telegram-style Dynamic Theme Syncing
+    let currentTheme = 0;
+    const themes = ['', 'theme-ocean', 'theme-cyber'];
+    function changeTheme() {
+        currentTheme = (currentTheme + 1) % themes.length;
+        chatOverlay.className = 'chat-overlay active ' + themes[currentTheme];
+        
+        // Notify user of theme change
+        const notif = document.createElement('div');
+        notif.style.cssText = "align-self: center; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 15px; font-size: 12px; color: var(--text-muted); margin: 10px 0;";
+        notif.textContent = "You changed the chat theme.";
+        document.getElementById('chatMessages').appendChild(notif);
+    }
+
 </script>
 </body>
 </html>
