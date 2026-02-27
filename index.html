@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blendr | Ultimate Social Ecosystem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. BASE SETUP & WIDER LAYOUT --- */
+        :root {
+            --bg-color: #050505;
+            --app-bg: #0a0a0f;
+            --card-bg: #16161e;
+            --accent: #ff007f;      
+            --accent-glow: rgba(255, 0, 127, 0.5);
+            --text-main: #ffffff;
+            --text-muted: #888888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        /* The Wider App Container */
+        .app-container {
+            width: 100%;
+            max-width: 550px; /* Made wider for a pro feel */
+            height: 100%;
+            background-color: var(--app-bg);
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 0, 127, 0.05);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 2. AVATARS --- */
+        .avatar-container { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
+        .text-avatar { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; color: white; }
+        .bg-1 { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
+        .bg-2 { background: linear-gradient(135deg, #00B4DB, #0083B0); }
+        .bg-3 { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
+
+        /* --- 3. MAIN HEADER --- */
+        .glass-header {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
+            background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            position: absolute; top: 0; left: 0; width: 100%; z-index: 50; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 22px; cursor: pointer; color: var(--text-main); }
+        .brand h2 { font-size: 24px; font-weight: 800; }
+        .brand .dot { color: var(--accent); }
+        .header-icons i { font-size: 20px; margin-left: 20px; cursor: pointer; transition: 0.2s; }
+        .header-icons i:hover { color: var(--accent); transform: scale(1.1); }
+
+        /* --- 4. TELEGRAM-STYLE LEFT SIDEBAR (PRIVACY FOCUSED) --- */
+        .sidebar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; opacity: 0; visibility: hidden; transition: 0.3s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        
+        .sidebar {
+            position: absolute; top: 0; left: -320px; width: 300px; height: 100%;
+            background: var(--card-bg); z-index: 101; transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex; flex-direction: column; box-shadow: 10px 0 25px rgba(0,0,0,0.8);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { padding: 35px 20px 20px; background: linear-gradient(135deg, #1a1a24, #0a0a0f); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-header .text-avatar { width: 70px; height: 70px; font-size: 28px; margin-bottom: 15px; border: 2px solid var(--accent); }
+        .sidebar-header h3 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
+        .sidebar-header p { color: var(--accent); font-size: 15px; font-weight: 600; margin-top: 5px; } /* Username only, no phone number! */
+        
+        .sidebar-menu { padding: 15px 0; overflow-y: auto; }
+        .sidebar-item { padding: 16px 25px; display: flex; align-items: center; gap: 15px; color: var(--text-main); font-size: 16px; transition: 0.2s; cursor: pointer; }
+        .sidebar-item:hover { background: rgba(255, 0, 127, 0.1); color: var(--accent); padding-left: 30px; }
+        .sidebar-item i { width: 25px; text-align: center; }
+
+        /* --- 5. PAGE SYSTEM (For switching between Chats and Reels) --- */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease;
+            padding-top: 70px; /* Header space */
+        }
+        .page.active { opacity: 1; visibility: visible; z-index: 10; }
+
+        /* CHATS PAGE */
+        .chat-list-container { padding: 10px 20px 100px; height: 100%; overflow-y: auto; }
+        .chat-card {
+            display: flex; align-items: center; background: var(--card-bg); padding: 16px;
+            border-radius: 18px; gap: 15px; margin-bottom: 12px; cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.02); transition: 0.2s;
+        }
+        .chat-card:hover { background: #1f1f2a; transform: translateY(-2px); }
+        .chat-card:active { transform: scale(0.97); }
+        .chat-info { flex: 1; overflow: hidden; }
+        .chat-info h4 { font-size: 17px; margin-bottom: 4px; font-weight: 600; }
+        .chat-info p { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+        .chat-meta .time { font-size: 12px; color: var(--text-muted); }
+
+        /* REELS / SHORTS PAGE (Addictive Content) */
+        .reels-container {
+            height: 100%; width: 100%; padding-bottom: 80px;
+            overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none;
+        }
+        .reels-container::-webkit-scrollbar { display: none; }
+        
+        .reel-video {
+            width: 100%; height: 100%; scroll-snap-align: start;
+            position: relative; background: #000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        /* Mock Video Backgrounds */
+        .vid-1 { background: linear-gradient(45deg, #12c2e9, #c471ed, #f64f59); }
+        .vid-2 { background: linear-gradient(45deg, #ff9966, #ff5e62); }
+        
+        .reel-overlay {
+            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; align-items: flex-end;
+        }
+        .reel-info h3 { font-size: 18px; margin-bottom: 8px; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .reel-info p { font-size: 14px; opacity: 0.9; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
+        .reel-actions { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .reel-action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s; }
+        .reel-action-btn:hover { transform: scale(1.2); color: var(--accent); }
+        .reel-action-btn i { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .reel-action-btn span { font-size: 12px; font-weight: bold; }
+
+        /* --- 6. ANIMATED BOTTOM NAVIGATION --- */
+        @keyframes jellyPop {
+            0% { transform: scale(1); }
+            40% { transform: scale(1.2) translateY(-5px); }
+            60% { transform: scale(0.9) translateY(0); }
+            100% { transform: scale(1); }
+        }
+
+        .floating-island {
+            position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 480px;
+            background: rgba(22, 22, 30, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; justify-content: space-around; align-items: center; padding: 12px; border-radius: 40px; z-index: 50;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+        }
+        .nav-item { color: var(--text-muted); font-size: 22px; padding: 10px; cursor: pointer; transition: 0.3s; position: relative; }
+        
+        .nav-item.active { color: var(--text-main); text-shadow: 0 0 15px var(--text-main); }
+        .nav-item.active i { animation: jellyPop 0.5s ease-out forwards; color: var(--accent); }
+        
+        .nav-action-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, #ff5e00 100%); width: 56px; height: 56px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px;
+            color: white; transform: translateY(-20px); border: 4px solid var(--app-bg); box-shadow: 0 8px 20px var(--accent-glow);
+            cursor: pointer; transition: 0.3s;
+        }
+        .nav-action-btn:hover { transform: translateY(-25px) scale(1.05); }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="text-avatar bg-3">ME</div>
+            <h3>My Profile <i class="fa-solid fa-circle-check" style="color: var(--accent); font-size: 14px;"></i></h3>
+            <p>@creator_blendr</p> </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-item"><i class="fa-solid fa-user-secret"></i> Ghost Mode (Invisible)</div>
+            <div class="sidebar-item"><i class="fa-solid fa-qrcode"></i> My QR Code</div>
+            <div class="sidebar-item"><i class="fa-solid fa-bookmark"></i> Saved Media & Links</div>
+            <div class="sidebar-item"><i class="fa-solid fa-fire"></i> Close Friends List</div>
+            <div class="sidebar-item"><i class="fa-solid fa-chart-simple"></i> Account Analytics</div>
+            <div class="sidebar-item"><i class="fa-solid fa-shield-halved"></i> Privacy & Security</div>
+        </div>
+    </div>
+
+    <header class="glass-header">
+        <div class="header-left">
+            <i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i>
+            <div class="brand"><h2>Blendr<span class="dot">.</span></h2></div>
+        </div>
+        <div class="header-icons">
+            <i class="fa-solid fa-camera"></i>
+            <i class="fa-solid fa-pen-to-square"></i>
+        </div>
+    </header>
+
+    <main class="page active" id="page-home">
+        <div class="chat-list-container">
+            <div class="chat-card">
+                <div class="avatar-container"><div class="text-avatar bg-1">S</div></div>
+                <div class="chat-info">
+                    <h4>Sarah Connor</h4>
+                    <p>Typing... <i class="fa-solid fa-pen" style="font-size: 10px;"></i></p>
+                </div>
+                <div class="chat-meta"><span class="time">Just now</span></div>
+            </div>
+            <div class="chat-card">
+                <div class="avatar-container"><div class="text-avatar bg-2"><i class="fa-solid fa-users"></i></div></div>
+                <div class="chat-info">
+                    <h4>Global Network</h4>
+                    <p>Welcome to the ultimate hybrid app!</p>
+                </div>
+                <div class="chat-meta"><span class="time">10:42 AM</span></div>
+            </div>
+        </div>
+    </main>
+
+    <main class="page" id="page-reels">
+        <div class="reels-container">
+            
+            <div class="reel-video vid-1">
+                <i class="fa-solid fa-play" style="font-size: 50px; opacity: 0.5;"></i>
+                <div class="reel-overlay">
+                    <div class="reel-info">
+                        <h3>@motion_graphics</h3>
+                        <p>Testing the new 3D render engine 🚀 #art #tech</p>
+                    </div>
+                    <div class="reel-actions">
+                        <div class="reel-action-btn"><i class="fa-solid fa-heart"></i><span>12k</span></div>
+                        <div class="reel-action-btn"><i class="fa-solid fa-comment"></i><span>450</span></div>
+                        <div class="reel-action-btn"><i class="fa-solid fa-share"></i><span>Share</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reel-video vid-2">
+                <i class="fa-solid fa-play" style="font-size: 50px; opacity: 0.5;"></i>
+                <div class="reel-overlay">
+                    <div class="reel-info">
+                        <h3>@daily_vibes</h3>
+                        <p>Morning motivation for the team! 💪</p>
+                    </div>
+                    <div class="reel-actions">
+                        <div class="reel-action-btn" style="color: var(--accent);"><i class="fa-solid fa-heart"></i><span>8.5k</span></div>
+                        <div class="reel-action-btn"><i class="fa-solid fa-comment"></i><span>102</span></div>
+                        <div class="reel-action-btn"><i class="fa-solid fa-share"></i><span>Share</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <nav class="floating-island">
+        <div class="nav-item active" onclick="switchPage('page-home', this)"><i class="fa-solid fa-message"></i></div>
+        <div class="nav-item" onclick="switchPage('page-reels', this)"><i class="fa-solid fa-clapperboard"></i></div>
+        
+        <div class="nav-action-btn"><i class="fa-solid fa-plus"></i></div>
+        
+        <div class="nav-item"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="nav-item"><i class="fa-regular fa-user"></i></div>
+    </nav>
+
+</div>
+
+<script>
+    // 1. Sidebar Logic
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('active');
+        sidebarOverlay.classList.toggle('active');
+    }
+    sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // 2. Bottom Navigation Page Switching Logic
+    function switchPage(pageId, clickedItem) {
+        // Remove active class from all pages and nav items
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+
+        // Add active class to clicked nav item and target page
+        clickedItem.classList.add('active');
+        document.getElementById(pageId).classList.add('active');
+    }
+</script>
+</body>
+</html>
