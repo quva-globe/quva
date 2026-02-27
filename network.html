@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blendr | Network Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. BASE & THEME VARIABLES --- */
+        :root {
+            --bg-deep: #050508; --card-bg: #121218; --accent-pink: #ff2a7a; --accent-cyan: #00e5ff;
+            --text-main: #ffffff; --text-muted: #8b8b99; --wa-green: #25D366;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #000; display: flex; justify-content: center; height: 100dvh; overflow: hidden; }
+        .app-container { width: 100%; max-width: 550px; height: 100%; background: var(--bg-deep); position: relative; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* --- 2. SIDEBAR --- */
+        .sidebar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 500; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: absolute; top: 0; left: -300px; width: 280px; height: 100%; background: var(--card-bg); z-index: 501; transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; }
+        .sidebar.active { left: 0; }
+        .sidebar-header { padding: 35px 20px 20px; background: #0a0a0f; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-pink), var(--accent-cyan)); display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; margin-bottom: 10px; }
+        .sidebar-item { padding: 16px 25px; display: flex; align-items: center; gap: 15px; color: var(--text-main); font-size: 15px; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .sidebar-item:active { background: rgba(255,255,255,0.05); transform: scale(0.98); }
+
+        /* --- 3. GLASS HEADER --- */
+        .glass-header { position: absolute; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .menu-btn { font-size: 22px; cursor: pointer; color: white; transition: 0.2s; }
+        .menu-btn:active { transform: scale(0.8); }
+        .brand h2 { font-size: 22px; font-weight: 800; color: white; letter-spacing: 0.5px; }
+        .header-icons i { font-size: 20px; cursor: pointer; color: white; transition: 0.2s; }
+        .header-icons i:active { transform: scale(0.8); }
+
+        /* --- 4. CONTENT AREA & TABS --- */
+        .content-area { flex: 1; overflow-y: auto; padding-top: 75px; padding-bottom: 100px; scrollbar-width: none; }
+        .content-area::-webkit-scrollbar { display: none; }
+
+        .search-container { padding: 5px 15px 15px; position: sticky; top: 0; background: var(--bg-deep); z-index: 10; }
+        .search-bar { background: var(--card-bg); border-radius: 20px; padding: 12px 18px; display: flex; align-items: center; gap: 12px; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.02); }
+        .search-bar input { background: transparent; border: none; outline: none; color: white; width: 100%; font-size: 15px; }
+
+        /* Custom Tab Switcher */
+        .tab-switcher { display: flex; background: rgba(255,255,255,0.03); margin: 0 15px 20px; border-radius: 16px; padding: 4px; border: 1px solid rgba(255,255,255,0.02); }
+        .tab-btn { flex: 1; text-align: center; padding: 10px; border-radius: 14px; font-size: 14px; font-weight: bold; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: var(--card-bg); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+
+        /* Create Action Banner */
+        .create-banner { margin: 0 15px 20px; background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 42, 122, 0.1)); border: 1px solid rgba(0, 229, 255, 0.2); padding: 15px 20px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .create-banner:active { transform: scale(0.96); }
+        .create-info h4 { color: white; font-size: 16px; margin-bottom: 4px; }
+        .create-info p { color: var(--accent-cyan); font-size: 12px; font-weight: bold; }
+        .create-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-cyan); color: #000; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 5px 15px rgba(0, 229, 255, 0.4); }
+
+        /* --- 5. NETWORK CARDS & AVATAR STACKING --- */
+        .network-list { display: flex; flex-direction: column; gap: 12px; padding: 0 15px; }
+        .network-card { display: flex; align-items: center; padding: 16px; background: var(--card-bg); border-radius: 20px; gap: 15px; border: 1px solid rgba(255,255,255,0.03); transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; }
+        .network-card:active { transform: scale(0.96); background: #1a1a24; }
+
+        .network-icon { width: 55px; height: 55px; border-radius: 18px; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; flex-shrink: 0; }
+        .net-1 { background: linear-gradient(135deg, #FF416C, #FF4B2B); }
+        .net-2 { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .net-3 { background: linear-gradient(135deg, #8E2DE2, #4A00E0); }
+        .net-4 { background: #2a2a35; color: var(--text-muted); }
+
+        .network-info { flex: 1; overflow: hidden; }
+        .network-info h4 { font-size: 16px; color: white; margin-bottom: 5px; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* Overlapping Avatar Engine */
+        .avatar-stack-container { display: flex; align-items: center; gap: 8px; }
+        .avatar-stack { display: flex; }
+        .mini-av { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--card-bg); display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: white; }
+        .mini-av:not(:first-child) { margin-left: -8px; }
+        .av-bg1 { background: var(--accent-pink); } .av-bg2 { background: var(--accent-cyan); } .av-bg3 { background: var(--accent-yellow); color: black; }
+        .member-count { font-size: 12px; color: var(--text-muted); font-weight: bold; }
+
+        /* Interactive Join Button */
+        .join-btn { background: rgba(255, 255, 255, 0.05); color: white; border: 1px solid rgba(255,255,255,0.1); padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .join-btn.joined { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3); }
+
+        /* Skeletons */
+        .skeleton { background: linear-gradient(90deg, #121218 25%, #1a1a24 50%, #121218 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 10px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* --- 6. BOTTOM NAVIGATION --- */
+        .nav-wrapper { position: absolute; bottom: 20px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 100; pointer-events: none; }
+        .bottom-nav { width: 90%; max-width: 420px; background: rgba(18, 18, 24, 0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-between; align-items: center; padding: 10px 25px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 15px 35px rgba(0,0,0,0.8); pointer-events: auto; }
+        .nav-item { color: rgba(255,255,255,0.5); font-size: 22px; padding: 8px; transition: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item:active { transform: scale(0.75); }
+        .nav-item.active { color: white; text-shadow: 0 0 15px rgba(255,255,255,0.8); }
+        .nav-item.active::after { content: ''; position: absolute; bottom: 0; width: 4px; height: 4px; background: white; border-radius: 50%; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-avatar" id="drawer-initial">U</div>
+            <h3 style="color: white; font-size: 18px;" id="drawer-name">Your Profile</h3>
+            <p style="color: var(--accent-cyan); font-size: 13px;" id="drawer-handle">@username</p>
+        </div>
+        <div class="sidebar-menu">
+            <a href="profile.html" class="sidebar-item"><i class="fa-regular fa-circle-user"></i> My Profile</a>
+            <a href="home.html" class="sidebar-item"><i class="fa-solid fa-message"></i> Messages</a>
+            <a href="explore.html" class="sidebar-item"><i class="fa-solid fa-compass"></i> Explore</a>
+            <a href="settings.html" class="sidebar-item"><i class="fa-solid fa-gear"></i> Settings</a>
+        </div>
+    </div>
+
+    <header class="glass-header">
+        <div class="header-left">
+            <i class="fa-solid fa-bars menu-btn" onclick="toggleSidebar()"></i>
+            <div class="brand"><h2>Network</h2></div>
+        </div>
+        <div class="header-icons">
+            <i class="fa-solid fa-magnifying-glass" onclick="document.getElementById('searchInput').focus()"></i>
+        </div>
+    </header>
+
+    <main class="content-area">
+        
+        <div class="search-container">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search communities & channels...">
+            </div>
+        </div>
+
+        <div class="tab-switcher">
+            <div class="tab-btn active" onclick="switchTab('groups', this)">Communities</div>
+            <div class="tab-btn" onclick="switchTab('channels', this)">Channels</div>
+        </div>
+
+        <div class="create-banner" onclick="alert('Creating a new Network...')">
+            <div class="create-info">
+                <h4>Start a Community</h4>
+                <p>Create a space for your vibe</p>
+            </div>
+            <div class="create-icon">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+        </div>
+
+        <div id="loading-skeletons" style="display: none; padding: 0 15px;"></div>
+
+        <div class="network-list" id="network-container">
+            </div>
+
+    </main>
+
+    <div class="nav-wrapper">
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item"><i class="fa-solid fa-house"></i></a>
+            <a href="explore.html" class="nav-item"><i class="fa-regular fa-compass"></i></a>
+            <a href="reels.html" class="nav-item"><i class="fa-solid fa-play"></i></a>
+            <a href="network.html" class="nav-item active"><i class="fa-solid fa-user-group"></i></a>
+            <a href="profile.html" class="nav-item"><i class="fa-regular fa-circle-user"></i></a>
+        </nav>
+    </div>
+
+</div>
+
+<script>
+    // --- Auth & Sidebar ---
+    document.addEventListener("DOMContentLoaded", () => {
+        const alias = localStorage.getItem("blendr_user");
+        if (!alias) { window.location.href = "login.html"; return; }
+        
+        document.getElementById("drawer-handle").textContent = alias;
+        document.getElementById("drawer-initial").textContent = alias.charAt(1).toUpperCase() || "U";
+        
+        // Load initial data
+        fetchNetworkData('groups');
+    });
+
+    function toggleSidebar() { 
+        document.getElementById('sidebarOverlay').classList.toggle('active'); 
+        document.getElementById('sidebar').classList.toggle('active'); 
+    }
+
+    // --- Tab Switcher Logic ---
+    function switchTab(type, element) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        element.classList.add('active');
+        fetchNetworkData(type);
+    }
+
+    // --- Interactive Join Button ---
+    function toggleJoin(btn, event) {
+        event.stopPropagation(); // Prevents opening the card
+        if(btn.classList.contains('joined')) {
+            // Unjoin
+            btn.classList.remove('joined');
+            btn.innerHTML = 'Join';
+        } else {
+            // Join
+            btn.classList.add('joined');
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Joined';
+        }
+    }
+
+    // --- Dynamic Data Fetcher ---
+    function fetchNetworkData(type) {
+        const container = document.getElementById('network-container');
+        const skeletons = document.getElementById('loading-skeletons');
+        
+        // Show Loading Skeletons
+        container.innerHTML = '';
+        skeletons.style.display = 'block';
+        skeletons.innerHTML = Array(4).fill(`
+            <div class="network-card skeleton" style="border:none; margin-bottom:12px;">
+                <div class="network-icon skeleton"></div>
+                <div style="flex:1;"><div class="skeleton" style="width:70%; height:16px; margin-bottom:8px;"></div><div class="skeleton" style="width:40%; height:12px;"></div></div>
+            </div>
+        `).join('');
+
+        // Simulate Backend Fetch
+        setTimeout(() => {
+            let data = [];
+            
+            if (type === 'groups') {
+                data = [
+                    { name: "Creators Collab", members: "1.2k", bg: "net-1", icon: "fa-palette", isJoined: true },
+                    { name: "Late Night Code", members: "840", bg: "net-3", icon: "fa-code", isJoined: false },
+                    { name: "Local Meetups", members: "3.5k", bg: "net-2", icon: "fa-location-dot", isJoined: false }
+                ];
+            } else {
+                data = [
+                    { name: "Blendr Official Announcements", members: "125k", bg: "net-2", icon: "fa-bullhorn", isJoined: true },
+                    { name: "Tech News Daily", members: "45k", bg: "net-4", icon: "fa-newspaper", isJoined: false },
+                    { name: "Gaming Tournaments (Tournyx)", members: "12k", bg: "net-1", icon: "fa-gamepad", isJoined: false }
+                ];
+            }
+
+            let html = "";
+            data.forEach(item => {
+                let btnClass = item.isJoined ? "join-btn joined" : "join-btn";
+                let btnText = item.isJoined ? '<i class="fa-solid fa-check"></i> Joined' : 'Join';
+
+                html += `
+                    <div class="network-card" onclick="alert('Opening ${item.name}...')">
+                        <div class="network-icon ${item.bg}"><i class="fa-solid ${item.icon}"></i></div>
+                        <div class="network-info">
+                            <h4>${item.name}</h4>
+                            <div class="avatar-stack-container">
+                                <div class="avatar-stack">
+                                    <div class="mini-av av-bg1">S</div>
+                                    <div class="mini-av av-bg2">M</div>
+                                    <div class="mini-av av-bg3">A</div>
+                                </div>
+                                <span class="member-count">${item.members} members</span>
+                            </div>
+                        </div>
+                        <button class="${btnClass}" onclick="toggleJoin(this, event)">${btnText}</button>
+                    </div>
+                `;
+            });
+
+            skeletons.style.display = 'none';
+            container.innerHTML = html;
+
+        }, 800);
+    }
+</script>
+</body>
+</html>
