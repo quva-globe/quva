@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>QUVA | Engineering Digital Futures</title>
+    <meta name="description" content="Quva provides enterprise-grade mobile applications, web platforms, and UI/UX design for startups, solo entrepreneurs, and enterprises.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* --- QUVA CORPORATE VARIABLES --- */
+        :root {
+            --bg-dark: #050508;
+            --bg-card: rgba(20, 20, 25, 0.4);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            
+            --quva-blue: #0073ff;
+            --quva-cyan: #00f2ff;
+            --quva-pink: #ff2a5f;
+            
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; cursor: none; }
+        @media (max-width: 768px) { * { cursor: auto; } }
+
+        body { background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-sans); overflow-x: hidden; line-height: 1.6; }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot { position: fixed; top: 0; left: 0; width: 12px; height: 12px; background: var(--quva-cyan); border-radius: 50%; pointer-events: none; z-index: 999999; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s, background 0.2s; box-shadow: 0 0 15px var(--quva-cyan); mix-blend-mode: exclusion; }
+        .cursor-outline { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(0, 242, 255, 0.5); border-radius: 50%; pointer-events: none; z-index: 999998; transform: translate(-50%, -50%); transition: 0.1s ease-out; }
+        body.hovering .cursor-dot { width: 50px; height: 50px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(2px); box-shadow: none;}
+        body.hovering .cursor-outline { opacity: 0; }
+
+        /* --- SCROLL PROGRESS BAR --- */
+        #scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--quva-blue), var(--quva-cyan), var(--quva-pink)); width: 0%; z-index: 2000; box-shadow: 0 0 10px var(--quva-cyan); transition: width 0.1s; }
+
+        /* --- BACKGROUND TECH GRID & NOISE --- */
+        .bg-noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; opacity: 0.03; background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); pointer-events: none;}
+        .bg-grid { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; background-image: linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 50px 50px; mask-image: radial-gradient(circle at center, black, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%); }
+        .glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); z-index: -2; opacity: 0.15; animation: floatOrb 10s infinite alternate ease-in-out;}
+        .orb-blue { width: 50vw; height: 50vw; background: var(--quva-blue); top: -20%; left: -10%; }
+        .orb-pink { width: 40vw; height: 40vw; background: var(--quva-pink); bottom: -10%; right: -10%; animation-delay: -5s;}
+        @keyframes floatOrb { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(50px, 50px) scale(1.2); } }
+
+        /* --- NAVBAR (FIXED GAPS) --- */
+        nav { position: fixed; width: 100%; top: 0; left: 0; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 8, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); z-index: 1000; transition: 0.3s; box-sizing: border-box;}
+        nav.scrolled { padding: 15px 5%; background: rgba(5, 5, 8, 0.95); box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .logo { font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .logo:hover { transform: scale(1.05); }
+        .logo span { background: linear-gradient(90deg, var(--quva-blue), var(--quva-cyan)); -webkit-background-clip: text; color: transparent; }
+        
+        .nav-links { display: flex; gap: 35px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: 0.3s; position: relative; }
+        .nav-links a::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -5px; left: 0; background: var(--quva-cyan); transition: 0.3s; }
+        .nav-links a:hover { color: white; }
+        .nav-links a:hover::after { width: 100%; }
+        
+        .nav-cta { background: white; color: black; padding: 10px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.3s; border: 1px solid white;}
+        .nav-cta:hover { background: transparent; color: white; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
+
+        /* --- HERO SECTION (FIXED GAPS) --- */
+        .hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px 20px 50px; position: relative; }
+        .badge { background: rgba(0, 115, 255, 0.1); border: 1px solid rgba(0, 115, 255, 0.3); color: var(--quva-cyan); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 25px; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 0 20px rgba(0, 115, 255, 0.2); animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        .hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); line-height: 1.1; max-width: 900px; margin-bottom: 20px; text-shadow: 0 0 40px rgba(255,255,255,0.1); letter-spacing: -1px;}
+        .text-gradient { background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%); -webkit-background-clip: text; color: transparent; }
+        .hero p { color: var(--text-muted); font-size: clamp(1rem, 2vw, 1.25rem); max-width: 600px; margin-bottom: 40px; }
+        
+        .hero-btns { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;}
+        .btn-primary { background: linear-gradient(135deg, var(--quva-blue), var(--quva-cyan)); color: white; padding: 16px 36px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.4s; box-shadow: 0 10px 30px rgba(0, 115, 255, 0.3); font-size: 1.1rem; position: relative; overflow: hidden;}
+        .btn-primary::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition: 0.5s; }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0, 242, 255, 0.5); }
+        .btn-secondary { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); color: white; padding: 16px 36px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: 0.4s; font-size: 1.1rem; backdrop-filter: blur(10px);}
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: var(--quva-cyan); transform: translateY(-5px);}
+
+        .float-badge { position: absolute; padding: 10px 15px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-glass); border-radius: 12px; backdrop-filter: blur(10px); font-size: 0.8rem; font-weight: 600; color: #ccc; display: flex; align-items: center; gap: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: -1; animation: float 6s ease-in-out infinite; }
+        .fb-1 { top: 20%; left: 10%; animation-delay: 0s; }
+        .fb-2 { top: 30%; right: 10%; animation-delay: 2s; border-color: rgba(0,242,255,0.3); color: var(--quva-cyan);}
+        .fb-3 { bottom: 20%; left: 15%; animation-delay: 4s; }
+        @media(max-width: 900px) { .float-badge { display: none; } }
+
+        /* --- INFINITE TECH MARQUEE --- */
+        .marquee-container { width: 100%; border-top: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass); padding: 20px 0; background: rgba(0,0,0,0.5); overflow: hidden; display: flex; white-space: nowrap; position: relative;}
+        .marquee-container::before, .marquee-container::after { content:''; position:absolute; top:0; width:150px; height:100%; z-index:2; }
+        .marquee-container::before { left:0; background: linear-gradient(90deg, var(--bg-dark), transparent); }
+        .marquee-container::after { right:0; background: linear-gradient(-90deg, var(--bg-dark), transparent); }
+        .marquee-track { display: inline-flex; gap: 50px; animation: marquee 25s linear infinite; padding-left: 50px;}
+        .marquee-item { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 1rem; font-weight: 600; font-family: var(--font-display); letter-spacing: 1px; }
+        .marquee-item i { color: var(--quva-cyan); font-size: 1.3rem; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- STATS COUNTERS --- */
+        .stats-section { padding: 60px 5%; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; text-align: center; }
+        .stat-card { padding: 30px; }
+        .stat-number { font-family: var(--font-display); font-size: 3.5rem; font-weight: 800; color: white; margin-bottom: 5px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .stat-label { color: var(--quva-cyan); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; font-size: 0.85rem; }
+
+        /* --- SERVICES (SPOTLIGHT EFFECT) --- */
+        .section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 15px; }
+        .section-header p { color: var(--text-muted); max-width: 600px; margin: 0 auto; font-size: 1.1rem;}
+
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        .service-card { background: var(--bg-card); border-radius: 16px; padding: 40px 30px; position: relative; overflow: hidden; backdrop-filter: blur(10px); transition: transform 0.4s; border: 1px solid var(--border-glass);}
+        .service-card:hover { transform: translateY(-10px); border-color: var(--quva-cyan); box-shadow: 0 10px 30px rgba(0, 242, 255, 0.1); }
+        .s-icon { width: 60px; height: 60px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; color: var(--quva-cyan); margin-bottom: 25px; transition: 0.3s;}
+        .service-card:hover .s-icon { background: var(--quva-cyan); color: black; box-shadow: 0 0 20px rgba(0,242,255,0.5); transform: scale(1.1) rotate(5deg); }
+        .service-card h3 { font-size: 1.5rem; margin-bottom: 15px; font-family: var(--font-display); }
+        .service-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+
+        /* --- PORTFOLIO (Showcasing Tournyx) --- */
+        .portfolio-card { background: linear-gradient(135deg, rgba(20,20,25,0.8), rgba(5,5,8,0.9)); border: 1px solid var(--border-glass); border-radius: 24px; overflow: hidden; display: flex; flex-direction: row; align-items: center; transition: 0.4s; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; }
+        .portfolio-card:hover { border-color: rgba(255, 42, 95, 0.4); box-shadow: 0 20px 60px rgba(255, 42, 95, 0.15); transform: scale(1.02); }
+        .p-content { padding: 60px; flex: 1; z-index: 2; }
+        .p-badge { color: var(--quva-pink); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block;}
+        .p-content h3 { font-family: var(--font-display); font-size: 2.5rem; margin-bottom: 15px; }
+        .p-content p { color: var(--text-muted); margin-bottom: 25px; font-size: 1.05rem; line-height: 1.7;}
+        .p-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 35px; }
+        .p-tag { background: rgba(255,255,255,0.05); padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; color: #e2e8f0; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(5px);}
+        .p-image { flex: 1.2; min-height: 450px; background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg_20wCR-WBMpQmw3vxcYUf-vxIO1PYDJoQN_Sid3UDjA9tf0cuX0eH40jbzHoJad4cxbnjhPjqfCw1Z5V1LhgN9zFuIQC0fJjecTy3D9PFu5WjR2H1wHwTD1bUGnXY_NiApWn5gMs6velcQngSzKoP1yHzX0cVsFSUFM8zIefcbiPayY7680Kz0V0ZAAE/s1264/1000093706.png') center/contain no-repeat; position: relative; transition: 0.5s; }
+        .portfolio-card:hover .p-image { transform: scale(1.05) translateX(10px); }
+        .p-image::after { content:''; position:absolute; top:0; left:-2px; width:100%; height:100%; background: linear-gradient(90deg, rgba(5,5,8,1) 0%, transparent 30%); }
+
+        /* --- FAQ ACCORDION --- */
+        .faq-section { max-width: 800px; margin: 0 auto; padding-top: 50px;}
+        .faq-item { border-bottom: 1px solid var(--border-glass); padding: 25px 0; cursor: pointer; }
+        .faq-question { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; font-weight: 600; color: white; transition: 0.3s; }
+        .faq-question i { color: var(--quva-cyan); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .faq-item.active .faq-question { color: var(--quva-cyan); }
+        .faq-item.active .faq-question i { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+        .faq-item.active .faq-answer { max-height: 200px; padding-top: 15px; }
+
+        /* --- REQUEST A PROJECT FORM (FLOATING LABELS) --- */
+        .contact-section { background: rgba(0, 115, 255, 0.02); border-top: 1px solid var(--border-glass); padding: 100px 5%; position: relative;}
+        .contact-container { max-width: 700px; margin: 0 auto; background: rgba(20,20,25,0.7); border: 1px solid var(--border-glass); padding: 50px; border-radius: 24px; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);}
+        #greeting { font-family: var(--font-display); font-size: 2rem; margin-bottom: 10px; color: white;}
+        .contact-subtitle { color: var(--text-muted); margin-bottom: 30px; }
+        
+        .form-group { position: relative; margin-bottom: 30px; }
+        .form-control { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-glass); color: white; padding: 20px 15px 10px; border-radius: 10px; font-family: var(--font-sans); font-size: 1rem; transition: 0.3s; outline: none; }
+        .form-label { position: absolute; left: 15px; top: 16px; color: var(--text-muted); font-size: 1rem; transition: 0.3s ease; pointer-events: none; }
+        .form-control:focus ~ .form-label, .form-control:not(:placeholder-shown) ~ .form-label { top: 6px; font-size: 0.75rem; color: var(--quva-cyan); font-weight: bold;}
+        .form-control:focus { border-color: var(--quva-blue); box-shadow: 0 0 20px rgba(0, 115, 255, 0.15); background: rgba(0,0,0,0.8);}
+        textarea.form-control { resize: vertical; min-height: 120px; padding-top: 25px;}
+        select.form-control { appearance: none; cursor: pointer; color: white;}
+        select.form-control:invalid { color: rgba(255,255,255,0); }
+        .select-icon { position: absolute; right: 15px; top: 20px; color: var(--text-muted); pointer-events: none; }
+        
+        .submit-btn { width: 100%; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+
+        /* --- COMPLIANT FOOTER --- */
+        footer { background: #020203; border-top: 1px solid var(--border-glass); padding: 80px 5% 30px; position: relative; z-index: 2;}
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
+        .f-logo { font-family: var(--font-display); font-size: 1.8rem; font-weight: bold; margin-bottom: 20px; display: flex; align-items:center; gap:10px; color:white; text-decoration:none;}
+        .f-about { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; max-width: 320px; line-height: 1.7;}
+        
+        .f-contact-info { color: #cbd5e1; font-size: 0.9rem; line-height: 2; }
+        .f-contact-info i { color: var(--quva-cyan); width: 24px; text-align: center; margin-right: 5px;}
+
+        .f-heading { color: white; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-size: 0.95rem; }
+        .f-links { list-style: none; }
+        .f-links li { margin-bottom: 15px; }
+        .f-links a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; transition: 0.3s; display: inline-block; }
+        .f-links a:hover { color: var(--quva-cyan); transform: translateX(5px); text-shadow: 0 0 10px rgba(0,242,255,0.3);}
+        
+        .footer-bottom { border-top: 1px solid var(--border-glass); padding-top: 30px; display: flex; justify-content: space-between; align-items: center; color: #666; font-size: 0.85rem; max-width: 1200px; margin: 0 auto; flex-wrap: wrap; gap: 15px;}
+        .social-icons { display: flex; gap: 15px; }
+        .social-icons a { color: #666; font-size: 1.2rem; transition: 0.3s; }
+        .social-icons a:hover { color: white; transform: translateY(-3px);}
+
+        /* Back to Top */
+        #backToTop { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); border-radius: 50%; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.2rem; cursor: pointer; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(5px);}
+        #backToTop.visible { opacity: 1; pointer-events: auto; }
+        #backToTop:hover { background: var(--quva-cyan); color: black; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,242,255,0.4);}
+
+        /* --- MOBILE MENU & RESPONSIVE FIXES --- */
+        .mobile-menu-btn { display: none; font-size: 1.5rem; cursor: pointer; color: white; z-index: 2001;}
+        .mobile-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 300px; height: 100vh; background: rgba(5,5,8,0.98); backdrop-filter: blur(20px); z-index: 2000; padding: 100px 40px; transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1); border-left: 1px solid var(--border-glass); box-shadow: -20px 0 50px rgba(0,0,0,0.8);}
+        .mobile-drawer.active { right: 0; }
+        .mobile-drawer a { display: block; font-family: var(--font-display); font-size: 1.8rem; color: white; text-decoration: none; margin-bottom: 30px; opacity: 0; transform: translateY(20px); transition: 0.4s; }
+        .mobile-drawer.active a { opacity: 1; transform: translateY(0); }
+        .mobile-drawer a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-drawer a:nth-child(2) { transition-delay: 0.2s; }
+        .mobile-drawer a:nth-child(3) { transition-delay: 0.3s; }
+        .mobile-drawer a:hover { color: var(--quva-cyan); }
+
+        @media (max-width: 900px) {
+            .portfolio-card { flex-direction: column-reverse; }
+            .p-image { min-height: 300px; width: 100%; border-left: none; border-bottom: 1px solid var(--border-glass); }
+            .p-image::after { background: linear-gradient(0deg, rgba(5,5,8,1) 0%, transparent 40%); }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px;}
+        }
+        @media (max-width: 768px) {
+            nav { padding: 15px 20px !important; } /* Overrides any external gaps */
+            .nav-links, .nav-cta { display: none; }
+            .mobile-menu-btn { display: block; }
+            .hero { min-height: 85vh; padding: 120px 20px 40px; }
+            .hero-btns { flex-direction: column; width: 100%; }
+            .contact-container, .p-content { padding: 30px 20px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column-reverse; text-align: center;}
+            .stat-card { border-bottom: 1px solid var(--border-glass); padding: 20px 0;}
+            .stat-card:last-child { border: none;}
+        }
+        
+        /* Animations */
+        .fade-up { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; }
+
+        /* Confetti */
+        .confetti { position: fixed; width: 10px; height: 10px; background: var(--quva-cyan); z-index: 9999; animation: pop 1s ease-out forwards; pointer-events: none;}
+        @keyframes pop { 0% { transform: translateY(0) scale(1) rotate(0deg); opacity:1;} 100% { transform: translateY(-200px) scale(0) rotate(360deg); opacity:0;} }
+    </style>
+</head>
+<body>
+
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <div id="scroll-progress"></div>
+
+    <div class="bg-noise"></div>
+    <div class="bg-grid"></div>
+    <div class="glow-orb orb-blue"></div>
+    <div class="glow-orb orb-pink"></div>
+
+    <nav id="navbar">
+        <a href="#" class="logo"><i class="fa-solid fa-code"></i> QUVA<span>.</span></a>
+        <div class="nav-links">
+            <a href="#services" class="hover-target">Services</a>
+            <a href="#work" class="hover-target">Our Work</a>
+            <a href="#about" class="hover-target">About</a>
+        </div>
+        <a href="#contact" class="nav-cta hover-target">Request a Project</a>
+        <i class="fa-solid fa-bars mobile-menu-btn" onclick="toggleMenu()" id="menuIcon"></i>
+    </nav>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+        <a href="#services" onclick="toggleMenu()">Services</a>
+        <a href="#work" onclick="toggleMenu()">Portfolio</a>
+        <a href="#about" onclick="toggleMenu()">About Quva</a>
+        <a href="#contact" onclick="toggleMenu()" style="color:var(--quva-cyan);">Start a Project</a>
+    </div>
+
+    <section class="hero">
+        <div class="float-badge fb-1"><i class="fa-solid fa-shield-check"></i> RBI Compliant</div>
+        <div class="float-badge fb-2"><i class="fa-brands fa-react"></i> High-Performance Stack</div>
+        <div class="float-badge fb-3"><i class="fa-solid fa-bolt"></i> Real-Time Sync</div>
+
+        <div class="badge fade-up">B2B Software Development Agency</div>
+        <h1 class="fade-up delay-1">Engineering the <span class="text-gradient">Future</span> of Digital Experiences.</h1>
+        <p class="fade-up delay-2">We build high-concurrency mobile applications, scalable web platforms, and custom payment architectures for startups and visionaries.</p>
+        <div class="hero-btns fade-up delay-2">
+            <a href="#contact" class="btn-primary hover-target">Start Your Project</a>
+            <a href="#work" class="btn-secondary hover-target">View Portfolio</a>
+        </div>
+    </section>
+
+    <div class="marquee-container fade-up">
+        <div class="marquee-track">
+            <div class="marquee-item"><i class="fa-brands fa-react"></i> React Native</div>
+            <div class="marquee-item"><i class="fa-brands fa-node-js"></i> Node.js</div>
+            <div class="marquee-item"><i class="fa-brands fa-python"></i> Python</div>
+            <div class="marquee-item"><i class="fa-solid fa-database"></i> Firebase / SQL</div>
+            <div class="marquee-item"><i class="fa-brands fa-aws"></i> AWS Infrastructure</div>
+            <div class="marquee-item"><i class="fa-solid fa-money-bill-transfer"></i> Razorpay Integrations</div>
+            
+            <div class="marquee-item"><i class="fa-brands fa-react"></i> React Native</div>
+            <div class="marquee-item"><i class="fa-brands fa-node-js"></i> Node.js</div>
+            <div class="marquee-item"><i class="fa-brands fa-python"></i> Python</div>
+            <div class="marquee-item"><i class="fa-solid fa-database"></i> Firebase / SQL</div>
+            <div class="marquee-item"><i class="fa-brands fa-aws"></i> AWS Infrastructure</div>
+            <div class="marquee-item"><i class="fa-solid fa-money-bill-transfer"></i> Razorpay Integrations</div>
+        </div>
+    </div>
+
+    <section class="stats-section fade-up">
+        <div class="stat-card">
+            <div class="stat-number count-up" data-target="99">0</div>
+            <div class="stat-label">99.9% Uptime SLA</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">₹<span class="count-up" data-target="50">0</span>M+</div>
+            <div class="stat-label">Txns Handled</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number count-up" data-target="150">0</div>
+            <div class="stat-label">Enterprise Clients</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">&lt;<span class="count-up" data-target="50">0</span>ms</div>
+            <div class="stat-label">API Latency</div>
+        </div>
+    </section>
+
+    <section id="services" class="section">
+        <div class="section-header fade-up">
+            <h2>Our Expertise</h2>
+            <p>End-to-end development solutions tailored for solo entrepreneurs and growing enterprises.</p>
+        </div>
+        <div class="services-grid" id="cards-container">
+            <div class="service-card hover-target fade-up">
+                <div class="s-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                <h3>App Development</h3>
+                <p>Native and cross-platform mobile applications engineered for speed, high concurrency, and flawless user experience across all devices.</p>
+            </div>
+            <div class="service-card hover-target fade-up delay-1">
+                <div class="s-icon"><i class="fa-solid fa-globe"></i></div>
+                <h3>Web Platforms</h3>
+                <p>Scalable, secure, and SEO-optimized web applications with modern frontend frameworks and robust serverless backend architectures.</p>
+            </div>
+            <div class="service-card hover-target fade-up delay-2">
+                <div class="s-icon"><i class="fa-solid fa-wallet"></i></div>
+                <h3>FinTech & Payments</h3>
+                <p>Seamless integration of RBI-compliant payment gateways (Razorpay, Cashfree), secure multi-wallet systems, and automated scheduled payouts.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="work" class="section">
+        <div class="section-header fade-up">
+            <h2>Featured Product</h2>
+            <p>Showcasing our capability to build complex, high-traffic ecosystems.</p>
+        </div>
+        
+        <div class="portfolio-card fade-up hover-target">
+            <div class="p-content">
+                <span class="p-badge">CASE STUDY</span>
+                <h3>Tournyx Esports</h3>
+                <p>India's ultimate premium skill-based platform for mobile gaming tournaments. Built by Quva, it features real-time bracket management, live match synchronization, and an automated wallet ledger capable of handling thousands of concurrent users.</p>
+                <div class="p-tags">
+                    <span class="p-tag">UI/UX Design</span>
+                    <span class="p-tag">Full-Stack Dev</span>
+                    <span class="p-tag">Payment Architecture</span>
+                </div>
+                <a href="https://tournyx.in" target="_blank" class="btn-primary" style="display:inline-block; padding: 12px 24px; font-size:0.95rem;">Explore Platform <i class="fa-solid fa-arrow-right" style="margin-left:5px;"></i></a>
+            </div>
+            <div class="p-image"></div>
+        </div>
+    </section>
+
+    <section class="section" id="about">
+        <div class="section-header fade-up">
+            <h2>Common Inquiries</h2>
+        </div>
+        <div class="faq-section fade-up">
+            <div class="faq-item hover-target" onclick="toggleFaq(this)">
+                <div class="faq-question">Do you assist with payment gateway approvals? <i class="fa-solid fa-chevron-down"></i></div>
+                <div class="faq-answer">Yes. We build platforms fully compliant with RBI and specific gateway guidelines (like Razorpay). We ensure your Terms, Privacy, and data architecture meet all required standards for rapid approval.</div>
+            </div>
+            <div class="faq-item hover-target" onclick="toggleFaq(this)">
+                <div class="faq-question">What tech stack do you specialize in? <i class="fa-solid fa-chevron-down"></i></div>
+                <div class="faq-answer">We utilize modern, high-performance stacks including React, Node.js, Python, Firebase, and AWS to ensure your application can scale from 100 to 100,000 users seamlessly.</div>
+            </div>
+            <div class="faq-item hover-target" onclick="toggleFaq(this)">
+                <div class="faq-question">Do you work with solo entrepreneurs? <i class="fa-solid fa-chevron-down"></i></div>
+                <div class="faq-answer">Absolutely. We act as a dedicated tech partner for solo founders, providing CTO-level guidance, development, and post-launch maintenance.</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="contact-container fade-up">
+            <h2 id="greeting">Good Day.</h2>
+            <p class="contact-subtitle">Tell us about your project requirements, timeline, and goals.</p>
+            
+            <form id="projectForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <input type="text" class="form-control hover-target" id="name" required placeholder=" ">
+                    <label class="form-label" for="name">Full Name / Company Name</label>
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control hover-target" id="email" required placeholder=" ">
+                    <label class="form-label" for="email">Email Address</label>
+                </div>
+                <div class="form-group">
+                    <select class="form-control hover-target" required>
+                        <option value="" disabled selected hidden></option>
+                        <option>Mobile Application</option>
+                        <option>Web Platform</option>
+                        <option>UI/UX Design</option>
+                        <option>Payment Gateway Integration</option>
+                        <option>Other Support</option>
+                    </select>
+                    <label class="form-label" style="top:6px; font-size:0.75rem; color:var(--quva-cyan); font-weight:bold;">Project Type</label>
+                    <i class="fa-solid fa-caret-down select-icon"></i>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control hover-target" id="details" required placeholder=" "></textarea>
+                    <label class="form-label" for="details">Project Details & Budget</label>
+                </div>
+                <button type="submit" class="btn-primary submit-btn hover-target" id="submitBtn">Initialize Request <i class="fa-solid fa-paper-plane"></i></button>
+            </form>
+        </div>
+    </section>
+
+    <footer id="footer">
+        <div class="footer-grid">
+            <div class="fade-up">
+                <a href="#" class="f-logo"><i class="fa-solid fa-code" style="color:var(--quva-blue)"></i> QUVA</a>
+                <p class="f-about">A premium software development agency empowering solo entrepreneurs and businesses with scalable technology.</p>
+                <div class="f-contact-info">
+                    <p><i class="fa-solid fa-envelope"></i> contact@quva.in</p>
+                    <p><i class="fa-solid fa-phone"></i> +91 98765 43210</p> <p><i class="fa-solid fa-location-dot"></i> 123 Tech Park, Chennai, Tamil Nadu, India</p> </div>
+            </div>
+            
+            <div class="fade-up delay-1">
+                <h4 class="f-heading">Services</h4>
+                <ul class="f-links">
+                    <li><a href="#services" class="hover-target">Mobile App Development</a></li>
+                    <li><a href="#services" class="hover-target">Web Architecture</a></li>
+                    <li><a href="#services" class="hover-target">UI/UX Prototyping</a></li>
+                    <li><a href="#services" class="hover-target">Payment Integration</a></li>
+                </ul>
+            </div>
+            
+            <div class="fade-up delay-1">
+                <h4 class="f-heading">Company</h4>
+                <ul class="f-links">
+                    <li><a href="#about" class="hover-target">About Us</a></li>
+                    <li><a href="#work" class="hover-target">Portfolio</a></li>
+                    <li><a href="#contact" class="hover-target">Hire Us</a></li>
+                </ul>
+            </div>
+
+            <div class="fade-up delay-2">
+                <h4 class="f-heading">Legal</h4>
+                <ul class="f-links">
+                    <li><a href="privacy.html" class="hover-target">Privacy Policy</a></li>
+                    <li><a href="terms.html" class="hover-target">Terms & Conditions</a></li>
+                    <li><a href="refund.html" class="hover-target">Cancellation & Refund Policy</a></li>
+                    <li><a href="shipping.html" class="hover-target">Pricing & Delivery Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div>&copy; 2026 Quva Technologies. All Rights Reserved.</div>
+            <div class="social-icons">
+                <a href="#" class="hover-target"><i class="fa-brands fa-linkedin"></i></a>
+                <a href="#" class="hover-target"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="hover-target"><i class="fa-brands fa-github"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="backToTop" class="hover-target" onclick="window.scrollTo(0,0)"><i class="fa-solid fa-arrow-up"></i></div>
+
+    <script>
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.getElementById("cursor-dot");
+        const cursorOutline = document.getElementById("cursor-outline");
+        let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        if(!isTouchDevice) {
+            window.addEventListener("mousemove", function (e) {
+                const posX = e.clientX; const posY = e.clientY;
+                cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+                cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
+            });
+            document.querySelectorAll('.hover-target, button, a, input, textarea, select, .faq-item').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+        } else {
+            cursorDot.style.display = 'none'; cursorOutline.style.display = 'none';
+        }
+
+        // --- SCROLL LOGIC ---
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            document.getElementById("scroll-progress").style.width = (winScroll / height) * 100 + "%";
+
+            const nav = document.getElementById('navbar');
+            if (winScroll > 50) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+
+            const btt = document.getElementById('backToTop');
+            if (winScroll > 500) btt.classList.add('visible');
+            else btt.classList.remove('visible');
+        });
+
+        // --- ANIMATED COUNTERS ---
+        const countObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    let count = 0;
+                    const speed = target / 50;
+                    const updateCount = setInterval(() => {
+                        count += speed;
+                        if(count >= target) { counter.innerText = target; clearInterval(updateCount); }
+                        else { counter.innerText = Math.floor(count); }
+                    }, 30);
+                    countObserver.unobserve(counter);
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.count-up').forEach(c => countObserver.observe(c));
+
+        // --- OBSERVER FOR FADE UP ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+        // --- DYNAMIC GREETING ---
+        const hour = new Date().getHours();
+        const greetingEl = document.getElementById('greeting');
+        if(hour < 12) greetingEl.innerText = "Good Morning.";
+        else if(hour < 18) greetingEl.innerText = "Good Afternoon.";
+        else greetingEl.innerText = "Good Evening.";
+
+        // --- FAQ TOGGLE ---
+        function toggleFaq(element) { element.classList.toggle('active'); }
+
+        // --- MOBILE MENU ---
+        function toggleMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            const icon = document.getElementById('menuIcon');
+            drawer.classList.toggle('active');
+            if(drawer.classList.contains('active')) {
+                icon.classList.remove('fa-bars'); icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.add('fa-bars'); icon.classList.remove('fa-xmark');
+            }
+        }
+
+        // --- FORM SUBMISSION ---
+        function fireConfetti(x, y) {
+            for(let i=0; i<40; i++) {
+                let conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = x + 'px'; conf.style.top = y + 'px';
+                conf.style.background = Math.random() > 0.5 ? 'var(--quva-cyan)' : 'var(--quva-blue)';
+                let dx = (Math.random() - 0.5) * 200;
+                conf.style.transform = `translateX(${dx}px)`;
+                document.body.appendChild(conf);
+                setTimeout(()=>conf.remove(), 1000);
+            }
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const rect = btn.getBoundingClientRect();
+            
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            btn.style.pointerEvents = 'none';
+            
+            setTimeout(() => {
+                fireConfetti(rect.left + rect.width/2, rect.top);
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Project Initialized';
+                btn.style.background = "var(--quva-cyan)";
+                btn.style.color = "#000";
+                e.target.reset();
+                
+                setTimeout(() => {
+                    btn.innerHTML = 'Initialize Request <i class="fa-solid fa-paper-plane"></i>';
+                    btn.style.background = ""; btn.style.color = ""; btn.style.pointerEvents = 'auto';
+                }, 4000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
