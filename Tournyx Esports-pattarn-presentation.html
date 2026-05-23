@@ -3,383 +3,573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tournyx Esports | Incubation Pitch Deck</title>
+    <title>Tournyx Esports | Academic Incubation Pitch Deck</title>
+    
+    <!-- External Fonts & Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- HIGH-RES PDF RENDERING ENGINES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
         :root {
             --bg-color: #030305;
             --surface: #0f1015;
             --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.3);
             --secondary: #a855f7;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: rgba(255, 255, 255, 0.08);
+            --success: #22c55e;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-
-        .deck-container { width: 90vw; height: 50.625vw; max-width: 1280px; max-height: 720px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8); overflow: hidden; display: flex; }
         
-        .slide { position: absolute; inset: 0; padding: 60px 80px; display: none; flex-direction: column; justify-content: center; opacity: 0; transition: opacity 0.5s ease; }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- PERSISTENT ACTION PANEL --- */
+        .action-panel {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 1280px;
+            justify-content: flex-end;
+            z-index: 100;
+        }
+
+        .btn-action {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        .btn-action:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+        }
+
+        /* --- THE RESPONSIVE CONTAINER --- */
+        .deck-container { 
+            width: 100%;
+            max-width: 1280px; 
+            height: 720px;
+            background: var(--surface); 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            position: relative; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8); 
+            overflow: hidden; 
+            display: flex; 
+            transition: all 0.3s ease;
+        }
+        
+        .slide { 
+            position: absolute; 
+            inset: 0; 
+            padding: 50px 60px; 
+            display: none; 
+            flex-direction: column; 
+            justify-content: center; 
+            opacity: 0; 
+            transition: opacity 0.2s ease;
+            overflow-y: auto;
+        }
+        
         .slide.active { display: flex; opacity: 1; }
 
-        .slide-header { font-size: 42px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 15px; }
+        .slide-header { 
+            font-size: 34px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: -0.5px; 
+            margin-bottom: 25px; 
+            background: linear-gradient(135deg, #fff, #a5b4fc); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            flex-shrink: 0;
+        }
+        
         .slide-header i { color: var(--primary); }
 
-        /* Typography & Grid Elements */
-        p { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
-        strong { color: #fff; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        /* --- TYPOGRAPHY & CORE LAYOUT ELEMENTS --- */
+        p { font-size: 16px; color: var(--text-muted); line-height: 1.6; margin-bottom: 15px; }
+        strong { color: #fff; font-weight: 600; }
         
-        .card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 30px; border-radius: 16px; transition: 0.3s; }
-        .card i { font-size: 28px; color: var(--secondary); margin-bottom: 15px; }
-        .card h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #fff; }
-        .card p { font-size: 15px; margin: 0; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        
+        .card { 
+            background: rgba(255,255,255,0.02); 
+            border: 1px solid var(--border); 
+            padding: 25px; 
+            border-radius: 16px; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        
+        .card i { font-size: 24px; color: var(--secondary); margin-bottom: 15px; }
+        .card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card p { font-size: 14px; margin: 0; line-height: 1.5; }
 
-        /* Title Slide Layout */
+        /* --- TITLE SLIDE SPECIAL CONFIGURATION --- */
         .title-slide { text-align: center; align-items: center; justify-content: center; }
-        .main-logo { width: 180px; height: 180px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(168,85,247,0.4)); }
-        .title-slide h1 { font-size: 64px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; }
+        .main-logo { width: 140px; height: 140px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 0 25px rgba(168,85,247,0.4)); }
+        .title-slide h1 { font-size: 56px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; line-height: 1.1; }
         .title-slide h1 span { color: var(--primary); text-shadow: 0 0 30px rgba(99,102,241,0.5); }
-        .title-slide h2 { font-size: 20px; color: var(--text-muted); font-weight: 400; margin-bottom: 40px; max-width: 600px; }
-        .meta-info { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 20px; width: 100%; max-width: 400px; }
+        .title-slide h2 { font-size: 18px; color: var(--text-muted); font-weight: 400; margin-bottom: 35px; max-width: 650px; line-height: 1.5; }
+        .meta-info { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 15px; width: 100%; max-width: 450px; line-height: 1.6; }
 
-        /* Watermark Logo */
-        .watermark { position: absolute; top: 40px; right: 40px; width: 50px; height: 50px; object-fit: contain; opacity: 0.15; }
+        /* --- BRANDING WATERMARK --- */
+        .watermark { position: absolute; top: 40px; right: 40px; width: 45px; height: 45px; object-fit: contain; opacity: 0.12; pointer-events: none; }
 
-        /* Controls */
-        .controls { position: absolute; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 10; }
-        .btn-nav { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 18px; transition: 0.3s; }
+        /* --- SYSTEM INTERFACE OVERLAYS --- */
+        .controls { position: absolute; bottom: 25px; right: 40px; display: flex; gap: 12px; z-index: 10; }
+        .btn-nav { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: #fff; width: 45px; height: 45px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 16px; transition: 0.3s; }
         .btn-nav:hover { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px rgba(99,102,241,0.4); }
-        .slide-number { position: absolute; bottom: 42px; left: 40px; font-size: 14px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
+        .slide-number { position: absolute; bottom: 38px; left: 40px; font-size: 13px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
 
-        /* Tables */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 18px; text-align: left; border-bottom: 1px solid var(--border); font-size: 16px; }
-        th { background: rgba(99,102,241,0.1); color: #fff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
+        /* --- DATA TABLES --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.01); border-radius: 12px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+        th { background: rgba(99,102,241,0.1); color: #fff; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
 
-        /* Highlight Block */
-        .highlight-box { background: rgba(99, 102, 241, 0.05); border-left: 4px solid var(--primary); padding: 25px; border-radius: 0 16px 16px 0; margin-top: 20px; }
-        .highlight-box p { margin: 0; font-size: 18px; color: #fff; font-style: italic; }
+        /* --- INLINE EDITORIAL BLOCK --- */
+        .highlight-box { background: rgba(99, 102, 241, 0.04); border-left: 4px solid var(--primary); padding: 20px; border-radius: 0 16px 16px 0; margin: 15px 0; }
+        .highlight-box p { margin: 0; font-size: 16px; color: #cbd5e1; font-style: italic; }
 
-        @media print {
-            body { background: #030305 !important; }
-            .deck-container { width: 100%; height: 100%; max-width: none; max-height: none; border: none; box-shadow: none; border-radius: 0; }
-            .slide { page-break-after: always; display: flex !important; opacity: 1 !important; position: relative; width: 100vw; height: 100vh; }
-            .controls { display: none !important; }
+        /* =========================================================================
+           📱 RESPONSIVE MEDIA BREAKPOINTS
+           ========================================================================= */
+        @media (max-width: 1024px) {
+            body { padding: 10px; }
+            .action-panel { justify-content: center; margin-bottom: 15px; }
+            .deck-container { height: auto; min-height: calc(100vh - 90px); border-radius: 16px; }
+            .slide { position: relative; opacity: 1; display: none; padding: 40px 24px 80px 24px; height: auto; overflow-y: visible; }
+            .slide.active { display: flex; }
+            .slide-header { font-size: 26px; margin-bottom: 20px; flex-wrap: wrap; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr !important; gap: 20px; }
+            .title-slide h1 { font-size: 36px; }
+            .title-slide h2 { font-size: 15px; }
+            .controls { bottom: 20px; right: 20px; width: calc(100% - 40px); justify-content: flex-end; }
+            .slide-number { bottom: 32px; left: 24px; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+            th, td { padding: 12px; font-size: 13px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="deck-container">
+    <!-- ACTION HEADER MODES -->
+    <div class="action-panel">
+        <button id="download-btn" class="btn-action" onclick="generatePixelPerfectPDF()">
+            <i class="fa-solid fa-file-pdf"></i> Download Perfect PDF
+        </button>
+    </div>
+
+    <!-- MAIN INTERACTIVE CONTAINER MATRIX -->
+    <div class="deck-container" id="deck-wrapper">
         
-        <!-- SLIDE 1: TITLE SLIDE -->
+        <!-- SLIDE 1: TITLE INTERFACE -->
         <div class="slide active title-slide">
             <img src="1000093706.png" class="main-logo" alt="Tournyx Logo">
             <h1>TOURNYX <span>ESPORTS</span></h1>
-            <h2>Architecting the Next-Gen Automated Infrastructure for Mobile Gaming in India.</h2>
+            <h2>Architecting Automated Infrastructure and Real-Time Data Synchronization Layers for Grassroots Mobile Esports in India.</h2>
             <div class="meta-info">
-                <strong>Thilakeshwaran</strong><br>Founder & Lead Developer<br><span style="font-size:12px; opacity:0.6;">Prototype Proposal for Academic Incubation</span>
+                <strong>Thilakeshwaran</strong><br>Founder & Lead Systems Developer<br><span style="font-size:11px; opacity:0.6; letter-spacing:1px;">Technical & Operational Framework for Academic Incubation</span>
             </div>
         </div>
 
-        <!-- SLIDE 2: THE PROBLEM -->
+        <!-- SLIDE 2: DEFINING THE CORE MARKET PROBLEM -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-triangle-exclamation"></i> The Broken State of Amateur Esports</h2>
-            <div class="grid-3" style="margin-top: 40px;">
+            <h2 class="slide-header"><i class="fa-solid fa-triangle-exclamation"></i> The Broken Structural State of Amateur Esports</h2>
+            <div class="grid-3" style="margin-top: 20px;">
                 <div class="card">
-                    <i class="fa-solid fa- people-arrows"></i>
+                    <i class="fa-solid fa-network-wired"></i>
                     <h3>Manual Friction</h3>
-                    <p>Millions of grassroots competitive mobile gamers are completely trapped coordinating brackets manually via messy WhatsApp and Discord groups.</p>
+                    <p>Millions of grassroots competitive mobile players are heavily bottlenecked by managing bracket configurations manually over loose, unorganized WhatsApp threads and Discord message streams.</p>
                 </div>
                 <div class="card">
                     <i class="fa-solid fa-hourglass-half"></i>
                     <h3>Data Sync Lag</h3>
-                    <p>Tournament administrators match up data manually on spreadsheets. This creates huge score lag, calculation mistakes, and slows operations.</p>
+                    <p>Tournament supervisors manually calculate map scores across static spreadsheets, introducing catastrophic computation errors, delayed payouts, and extended schedule drag.</p>
                 </div>
                 <div class="card">
                     <i class="fa-solid fa-circle-nodes"></i>
                     <h3>Fragmented Layer</h3>
-                    <p>Amateur players have no centralized profile ecosystem to showcase verified lifetime gaming metrics or career history securely without community bias.</p>
+                    <p>Amateur competitive talents lack an optimized, unified portfolio framework to display immutable, verified career performance metrics without localized host platform bias.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 3: MARKET OPPORTUNITY -->
+        <!-- SLIDE 3: EVALUATING MARKET SECTORS -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-chart-line"></i> The Indian Gaming Explosion</h2>
-            <div class="grid-2">
+            <h2 class="slide-header"><i class="fa-solid fa-chart-line"></i> Market Validation: The Indian Gaming Boom</h2>
+            <div class="grid-2" style="margin-top: 15px;">
                 <div>
-                    <p style="font-size: 22px; color: #fff; font-weight: 700; margin-bottom: 30px;">India has naturally evolved into the single largest mobile gaming consumer market on Earth.</p>
-                    <p>Empowered by low-cost high-speed mobile data data networks, regional tier-2 and tier-3 youth have transformed casual gameplay into a massive competitive structural economy.</p>
+                    <p style="font-size: 20px; color: #fff; font-weight: 700; margin-bottom: 20px;">India has structurally scaled into the single largest mobile gaming consumer base globally.</p>
+                    <p>Driven by low-cost high-speed cellular data pipelines, youth in regional Tier-2 and Tier-3 zones have turned simple match interaction habits into a formalized micro-economic sector ready for infrastructure monetization.</p>
                 </div>
                 <div class="grid-2" style="gap: 20px;">
-                    <div class="card" style="border-color: rgba(34,197,94,0.3);">
-                        <h3 style="font-size: 36px; color: #22c55e;">8.45B</h3>
-                        <p>Game Downloads inside India (FY 24-25 market high)</p>
+                    <div class="card" style="border-color: rgba(34,197,94,0.2);">
+                        <h3 style="font-size: 32px; color: #22c55e;">8.45B</h3>
+                        <p style="color:var(--text-muted); font-size:13px; margin-top:5px;">Game App Downloads inside India within the past fiscal calendar block.</p>
                     </div>
-                    <div class="card" style="border-color: rgba(99,102,241,0.3);">
-                        <h3 style="font-size: 36px; color: var(--primary);">$3.7B</h3>
-                        <p>Indian Market Evaluation Base Valuation</p>
+                    <div class="card" style="border-color: rgba(99,102,241,0.2);">
+                        <h3 style="font-size: 32px; color: var(--primary);">$3.7B</h3>
+                        <p style="color:var(--text-muted); font-size:13px; margin-top:5px;">Base valuation of the domestic gaming economy, maintaining an aggressive 20%+ compound growth vector.</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 4: THE MOBILE DOMINANCE -->
+        <!-- SLIDE 4: TELEMETRY DOMINANCE PROFILE -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-mobile-screen-button"></i> Mobile-First Demographic</h2>
-            <div class="grid-2">
-                <div class="card" style="background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2);">
+            <h2 class="slide-header"><i class="fa-solid fa-mobile-screen-button"></i> Mobile-First User Telemetry</h2>
+            <div class="grid-2" style="margin-top: 10px;">
+                <div class="card" style="background: rgba(168,85,247,0.03); border-color: rgba(168,85,247,0.2);">
                     <i class="fa-solid fa-users" style="color: var(--secondary);"></i>
-                    <h3 style="font-size: 24px;">488+ Million Active Gamers</h3>
-                    <p style="font-size: 16px; margin-top: 10px;">Over 90% of the entire Indian gaming collective access esports purely through low-to-mid tier smartphones rather than high-end PC rigs.</p>
+                    <h3 style="font-size: 20px;">488M+ Active Consumer Base</h3>
+                    <p style="font-size: 14px; margin-top: 8px;">Approximately 90% of all Indian gaming assets operate through highly accessible handheld mobile operating systems rather than expensive dedicated static desktop PC arrays.</p>
                 </div>
                 <div>
-                    <p style="margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>Age Bracket:</strong> 77% of target infrastructure consumers fall perfectly between 18 and 34 years old.</p>
-                    <p style="margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>Core Titles:</strong> Highly intense community battlegrounds such as Free Fire MAX and BGMI dictate structural traffic patterns.</p>
-                    <p><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>The Critical Need:</strong> High-performance, zero-bloat automated systems engineered to execute inside simple mobile web views.</p>
+                    <p style="margin-bottom: 12px;"><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>Target Generation:</strong> 77% of structural platform end-users are concentrated precisely in the 18-34 age cohort.</p>
+                    <p style="margin-bottom: 12px;"><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>Ecosystem Triggers:</strong> Title variants like Free Fire MAX and BGMI run operational traction trends.</p>
+                    <p><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>The Technical Mandate:</strong> Zero-bloat, lightweight automation layers optimized to deploy inside web view contexts without local storage overhead constraints.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 5: THE SOLUTION -->
+        <!-- SLIDE 5: SYSTEM LAYER BLUEPRINT -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-rocket"></i> The Tournyx Platform Solution</h2>
+            <h2 class="slide-header"><i class="fa-solid fa-rocket"></i> Structural Innovation: The Tournyx Concept</h2>
             <div class="highlight-box">
-                <p>"Tournyx safely clears out messy human operation overhead loops. By replacing manual entry chains with data-driven code modules, we establish an instantaneous database engine for regional mobile competitive formats."</p>
+                <p>"Tournyx safely engineering out the failure-prone human element. By linking real-time programmatic parsing scripts straight into operational tournament dashboards, we deliver a lightning-fast data layer for regional tournament frameworks."</p>
             </div>
-            <p style="margin-top: 30px; font-size: 20px; color: #fff; text-align: center;"><strong>Automation Layer + Unbiased Ecosystem Integrity = Scalable Infrastructure</strong></p>
+            <div class="grid-3" style="margin-top: 25px; text-align: center;">
+                <div class="card"><h4 style="color:var(--primary); font-size:24px; font-weight:900;">100%</h4><p style="font-size:12px; margin-top:5px;">Automated Data Parsing</p></div>
+                <div class="card"><h4 style="color:var(--secondary); font-size:24px; font-weight:900;">0ms</h4><p style="font-size:12px; margin-top:5px;">Manual Seeding Delay</p></div>
+                <div class="card"><h4 style="color:var(--success); font-size:24px; font-weight:900;">Pure</h4><p style="font-size:12px; margin-top:5px;">Ecosystem Neutrality</p></div>
+            </div>
         </div>
 
-        <!-- SLIDE 6: FRONTEND ARCHITECTURE -->
+        <!-- SLIDE 6: UI CLIENT SUBSYSTEMS -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-sliders"></i> Seamless Frontend UX Architecture</h2>
+            <h2 class="slide-header"><i class="fa-solid fa-sliders"></i> High-Fidelity Client Interface UX</h2>
             <div class="grid-3" style="margin-top: 20px;">
                 <div class="card">
-                    <i class="fa-solid fa-id-card"></i>
-                    <h3>Strict Registration</h3>
-                    <p>Clean 10-digit telephone logic parsing and verification locks unique in-game identification data securely to active entries.</p>
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <h3>Verified Registration</h3>
+                    <p>Clean regular expression scripts process 10-digit telephone variables, securely tracking verified player identifiers straight to active tournament brackets.</p>
                 </div>
                 <div class="card">
                     <i class="fa-solid fa-diagram-project"></i>
-                    <h3>Interactive Visuals</h3>
-                    <p>Live responsive tournament dynamic bracket maps show layout brackets adapting smoothly across mobile screen dimensions.</p>
+                    <h3>Dynamic Visual Trees</h3>
+                    <p>Highly interactive CSS flex layout grids update current progression paths visually across any mobile viewport instantly as rounds conclude.</p>
                 </div>
                 <div class="card">
                     <i class="fa-solid fa-bolt-lightning"></i>
-                    <h3>Zero Installation</h3>
-                    <p>Operates entirely through optimized web layouts. Zero download constraints mean immediate, friction-free platform interactions.</p>
+                    <h3>Frictionless Load</h3>
+                    <p>Eliminating installation requirements completely by keeping pages lightweight and fast to fetch over basic local 4G/5G mobile pipelines.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 7: BACKEND STABILITY -->
+        <!-- SLIDE 7: BACKEND STABILITY SCHEMATICS -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-server"></i> High-Velocity Backend Core</h2>
-            <div class="grid-2">
+            <h2 class="slide-header"><i class="fa-solid fa-server"></i> Synchronous Backend Architecture</h2>
+            <div class="grid-2" style="margin-top: 15px;">
                 <div>
-                    <p style="margin-bottom: 20px;">The backend framework is built specifically to process and route rapid application commands synchronously while tracking multi-player registration tables smoothly.</p>
-                    <div class="card" style="background: rgba(34,197,94,0.03); border-color: rgba(34,197,94,0.2);">
-                        <h4 style="color:#22c55e; margin-bottom: 5px;"><i class="fa-solid fa-shield-halved"></i> Automated Bouncer Logic</h4>
-                        <p style="font-size:14px;">Ensures security protocols analyze input traffic, blocking automated bot requests or empty form submissions instantly.</p>
+                    <p style="margin-bottom: 15px;">The server architecture parses asynchronous HTTP requests into parallel transaction logs, tracking user states smoothly across unified data tables.</p>
+                    <div class="card" style="background: rgba(34,197,94,0.02); border-color: rgba(34,197,94,0.2); padding: 15px;">
+                        <h4 style="color:#22c55e; font-size:14px; margin-bottom:5px;"><i class="fa-solid fa-filter"></i> Automated Request Filtering</h4>
+                        <p style="font-size:12px;">Pre-compiled verification filters process empty payloads or script strings out, securing the integrity of database writes.</p>
                     </div>
                 </div>
-                <div class="card" style="background: rgba(0,0,0,0.2);">
-                    <h3 style="font-family: monospace; font-size: 16px; color: var(--secondary); margin-bottom: 10px;">// Core Logic Framework</h3>
-                    <p style="font-family: monospace; font-size: 13px; color: #cbd5e1; line-height: 1.4;">
+                <div class="card" style="background: rgba(0,0,0,0.25); justify-content: center;">
+                    <h3 style="font-family: monospace; font-size: 14px; color: var(--secondary); margin-bottom: 8px;">// Runtime Data Handling</h3>
+                    <p style="font-family: monospace; font-size: 11px; color: #cbd5e1; line-height: 1.5; margin: 0;">
                         function doPost(e) {<br>
-                        &nbsp;&nbsp;const role = e.parameter.role;<br>
-                        &nbsp;&nbsp;if(role === "other") { <br>
-                        &nbsp;&nbsp;&nbsp;&nbsp;role = e.parameter.custom_role;<br>
+                        &nbsp;&nbsp;let targetRole = e.parameter.role;<br>
+                        &nbsp;&nbsp;if(targetRole === "other") {<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;targetRole = e.parameter.custom_role;<br>
                         &nbsp;&nbsp;}<br>
-                        &nbsp;&nbsp;sheet.appendRow([new Date(), name, email, role]);<br>
-                        &nbsp;&nbsp;sendThemedConfirmation(email, role);<br>
+                        &nbsp;&nbsp;dataSheet.appendRow([new Date(), targetRole]);<br>
+                        &nbsp;&nbsp;dispatchSecureReceipt(e.parameter.email);<br>
                         }
                     </p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 8: THE REGIONAL ADVANTAGE -->
+        <!-- SLIDE 8: GEOGRAPHIC SUBMARKETS -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-map-location-dot"></i> Capturing Regional Markets</h2>
-            <div class="grid-2">
+            <h2 class="slide-header"><i class="fa-solid fa-map-location-dot"></i> Regional Market Optimization</h2>
+            <div class="grid-2" style="margin-top: 20px;">
                 <div>
-                    <p style="font-size: 20px; color:#fff; font-weight:600;">Two-thirds of India's aggregate mobile gaming communities now flourish outside Tier-1 urban metropolises.</p>
-                    <p style="margin-top: 15px;">Tamil Nadu stands out as a booming center for competitive esports talent. Tournyx strategically taps directly into these highly passionate regional communities before rolling out nationwide scaling frameworks.</p>
+                    <p style="font-size: 18px; color:#fff; font-weight:600; margin-bottom: 15px;">Over 60% of aggregate digital entertainment traffic trends are originating inside Tier-2 and Tier-3 cities.</p>
+                    <p>Tamil Nadu maintains high regional density curves for competitive team formations. Tournyx scales organically inside these vibrant, highly passionate localized gaming hubs before rolling out broader multi-region operations.</p>
                 </div>
-                <div class="card" style="text-align: center;">
-                    <i class="fa-solid fa-house-laptop" style="font-size: 48px; color: var(--primary);"></i>
-                    <h3 style="margin-top: 15px;">The Grassroots Launchpad</h3>
-                    <p>Providing formal tournament framework structures to the local gaming circles that global publishers overlook.</p>
+                <div class="card" style="text-align: center; justify-content: center; align-items: center; background: rgba(99,102,241,0.02);">
+                    <i class="fa-solid fa-network-wired" style="font-size: 36px; color: var(--primary);"></i>
+                    <h3 style="font-size:16px; margin-top:10px;">Grassroots Access Layer</h3>
+                    <p style="font-size:13px; text-align:center;">Delivering enterprise-grade tournament structures straight to deep rural communities skipped over by major Western brand groups.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 9: REVENUE MODEL -->
+        <!-- SLIDE 9: REVENUE CAPTURE VECTORS -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-sack-dollar"></i> Sustainable Monetization Architecture</h2>
-            <table style="margin-top: 20px;">
+            <h2 class="slide-header"><i class="fa-solid fa-sack-dollar"></i> Monetization Matrix</h2>
+            <table style="margin-top: 15px;">
                 <thead>
                     <tr>
-                        <th>Revenue Flow Channel</th>
-                        <th>Operational Execution Strategy</th>
-                        <th>Target Monetization Core</th>
+                        <th>Revenue Flow Vector</th>
+                        <th>Implementation Framework</th>
+                        <th>Fiscal Yield Goal</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Programmatic Distribution</strong></td>
-                        <td>High-fill web components via networks like AdMob or Unity Ads</td>
-                        <td>Consistent passive yields scaled on daily match traffic</td>
+                        <td><strong>Programmatic Network Integration</strong></td>
+                        <td>High-fill web assets served via optimized SDK networks like AdMob</td>
+                        <td>Scalable passive income scaling directly with daily match views</td>
                     </tr>
                     <tr>
                         <td><strong>Convenience Logistics Fees</strong></td>
-                        <td>Micro-percentage handling fee on prize pool transactions</td>
-                        <td>Secures transaction volumes as platform trust scales</td>
+                        <td>Micro-percentage handling rate attached to premium entry pools</td>
+                        <td>Continuous operational capital generation as team numbers rise</td>
                     </tr>
                     <tr>
-                        <td><strong>B2B Software Access (SaaS)</strong></td>
-                        <td>Premium tools, analytics access, and custom overlays for independent hosts</td>
-                        <td>Monthly recurring operational subscription packages</td>
+                        <td><strong>B2B SaaS Module Licensing</strong></td>
+                        <td>Advanced configuration tools and overlays licensed out to independent hosts</td>
+                        <td>Stable MRR growth curves independent of standalone matches</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- SLIDE 10: GO-TO-MARKET -->
+        <!-- SLIDE 10: VIRAL GROWTH MECHANISMS -->
         <div class="slide">
             <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-bullhorn"></i> Go-To-Market & Viral Loops</h2>
+            <h2 class="slide-header"><i class="fa-solid fa-bullhorn"></i> Go-To-Market Execution & Velocity Loops</h2>
+            <div class="grid-3" style="margin-top: 25px;">
+                <div class="card">
+                    <h3 style="color: var(--primary); font-size:16px;">01 / Media Synergies</h3>
+                    <p style="margin-top:8px;">We route active browser traffic back to regional gaming streamers, earning high-impact organic marketing loops across video feeds without cash spend.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--secondary); font-size:16px;">02 / The Legends League</h3>
+                    <p style="margin-top:8px;">Deploying official high-profile circuit formats directly on the platform to demonstrate data system stability and win widespread player trust.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--success); font-size:16px;">03 / Academic Pipelines</h3>
+                    <p style="margin-top:8px;">Onboarding bright tech students, graphic design minds, and community mods right from college campuses to rapidly scale operations.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: COMPETITIVE BENCHMARKING -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-trophy"></i> Comparative Market Advantages</h2>
+            <div class="grid-2" style="margin-top: 15px;">
+                <div class="card" style="border-left: 4px solid #ef4444;">
+                    <h3 style="font-size:15px; margin-bottom:10px; color:#ef4444;">Manual Legacy Workflows</h3>
+                    <p style="font-size: 13px; margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> Over 48-hour lag times verifying basic results.</p>
+                    <p style="font-size: 13px; margin-bottom: 6px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> High vulnerability to staff spreadsheet entry script bugs.</p>
+                    <p style="font-size: 13px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> High configuration friction across disjointed applications.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--success); background: rgba(34,197,94,0.01);">
+                    <h3 style="font-size:15px; margin-bottom:10px; color:var(--success);">The Programmatic Tournyx Architecture</h3>
+                    <p style="font-size: 13px; margin-bottom: 6px;"><i class="fa-solid fa-check" style="color:var(--success); margin-right: 8px;"></i> Instantaneous, code-driven generation of bracket matching models.</p>
+                    <p style="font-size: 13px; margin-bottom: 6px;"><i class="fa-solid fa-check" style="color:var(--success); margin-right: 8px;"></i> No local space restrictions via browser view optimization.</p>
+                    <p style="font-size: 13px;"><i class="fa-solid fa-check" style="color:var(--success); margin-right: 8px;"></i> Total platform layout neutrality protecting match verification lines.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: TECHNICAL TRACTION METRICS -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-code"></i> Current Technical Pipeline Readiness</h2>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div>
+                    <p style="font-size: 18px; color:#fff; font-weight:600; margin-bottom: 15px;">The fundamental interface components are completely up and responding to data payloads.</p>
+                    <p>Client inputs process seamlessly across web hooks. Background microservices match logic values quickly, appending variables safely to structured arrays while triggering instant HTML verification notifications back to candidate systems.</p>
+                </div>
+                <div class="card" style="border-color: rgba(168,85,247,0.3); text-align: center; justify-content: center; align-items: center;">
+                    <i class="fa-solid fa-microchip" style="color: var(--secondary); font-size: 32px; margin-bottom:10px;"></i>
+                    <h3 style="font-size:15px;">Prepped for Field Stresstesting</h3>
+                    <p style="font-size: 13px; text-align:center; margin-top:5px;">Data highways are fully secured and optimized, waiting to host dynamic trials with local amateur gaming groups.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: THE INCUBATION PARTNERSHIP PROPOSAL -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-graduation-cap"></i> Academic Incubation Strategy</h2>
             <div class="grid-3" style="margin-top: 30px;">
                 <div class="card">
-                    <h3 style="color: var(--primary);">01 / Creator Funnels</h3>
-                    <p style="margin-top:10px;">We drive our backend web traffic directly to regional YouTube streaming casters, securing high-impact community integration loops for free.</p>
+                    <i class="fa-solid fa-microchip"></i>
+                    <h3>Technical Review</h3>
+                    <p>Seeking specialized engineering faculty mentorship to run logic analysis on parallel data scaling configurations.</p>
                 </div>
                 <div class="card">
-                    <h3 style="color: var(--secondary);">02 / The Legends League</h3>
-                    <p style="margin-top:10px;">Running organized, high-visibility neutral circuit events to prove software performance limits and build deep player trust.</p>
+                    <i class="fa-solid fa-server"></i>
+                    <h3>Sandbox Sandbox Space</h3>
+                    <p>Utilizing campus computing infrastructures to test query speeds during high concurrent request spikes.</p>
                 </div>
                 <div class="card">
-                    <h3 style="color: #22c55e;">03 / Talent Pipelines</h3>
-                    <p style="margin-top:10px;">Recruiting an agile, dedicated student developer and moderation task force directly from campuses to accelerate growth.</p>
+                    <i class="fa-solid fa-chart-line"></i>
+                    <h3>Venture Integration</h3>
+                    <p>Representing the institution's innovation lab at state development events, startup forums, and tech ecosystem meets.</p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 11: COMPETITIVE ADVANTAGE -->
-        <div class="slide">
-            <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-trophy"></i> Why Tournyx Dominates</h2>
-            <div class="grid-2" style="margin-top: 20px;">
-                <div class="card" style="border-left: 4px solid var(--primary);">
-                    <h3 style="margin-bottom: 5px;">Traditional Manual Tournaments</h3>
-                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> 48-Hour delay times clearing match records.</p>
-                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> High probability of human data tracking slip-ups.</p>
-                    <p style="font-size: 14px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> Complicated, disjointed cross-platform configurations.</p>
-                </div>
-                <div class="card" style="border-left: 4px solid #22c55e; background: rgba(34,197,94,0.02);">
-                    <h3 style="margin-bottom: 5px; color:#22c55e;">The Automated Tournyx Advantage</h3>
-                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-check" style="color:#22c55e; margin-right: 8px;"></i> Instant automated group bracket rendering.</p>
-                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-check" style="color:#22c55e; margin-right: 8px;"></i> Zero local storage overhead requirements via optimized web views.</p>
-                    <p style="font-size: 14px;"><i class="fa-solid fa-check" style="color:#22c55e; margin-right: 8px;"></i> Complete community neutrality built to scale effortlessly.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 12: PROTOTYPE STATUS -->
-        <div class="slide">
-            <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-code"></i> Operational Blueprint Status</h2>
-            <div class="grid-2" style="margin-top: 30px;">
-                <div>
-                    <p style="font-size: 20px; color:#fff; font-weight:600; margin-bottom: 15px;">The fundamental system components are built, live, and actively listening for data endpoints.</p>
-                    <p>Our custom frontend layouts capture deep form data structures flawlessly. Secure background automated triggers capture these variables instantly, routing clean responses straight to our sheet database arrays while firing out immediate confirmation emails.</p>
-                </div>
-                <div class="card" style="border-color: rgba(168,85,247,0.4); text-align: center;">
-                    <i class="fa-solid fa-circle-nodes" style="color: var(--secondary); font-size: 36px;"></i>
-                    <h3 style="margin-top: 10px;">Ready for Beta Validation</h3>
-                    <p style="font-size: 14px; margin-top: 5px;">Core data pipelines are fully secured, verified, and prepped for deep platform alpha trials alongside active grassroots gaming clans.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 13: THE INCUBATION ASK -->
-        <div class="slide">
-            <img src="1000093706.png" class="watermark">
-            <h2 class="slide-header"><i class="fa-solid fa-graduation-cap"></i> Academic Incubation Partnership</h2>
-            <div class="grid-3" style="margin-top: 40px;">
-                <div class="card">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                    <h3>Technical Guidance</h3>
-                    <p>Seeking software faculty mentorship to optimize database structures and design server load configurations.</p>
-                </div>
-                <div class="card">
-                    <i class="fa-solid fa-network-wired"></i>
-                    <h3>Lab Infrastructure</h3>
-                    <p>Leveraging high-speed lab development sandbox setups to safely execute stress tests on concurrent database spikes.</p>
-                </div>
-                <div class="card">
-                    <i class="fa-solid fa-award"></i>
-                    <h3>Institutional Pride</h3>
-                    <p>Representing our college proudly at major state tech innovation summits and venture forums like StartupTN.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 14: CONCLUSION -->
+        <!-- SLIDE 14: STRATEGIC SUMMARY INTERFACE -->
         <div class="slide title-slide">
             <img src="1000093706.png" class="main-logo" alt="Tournyx Logo">
-            <h1>LET'S BUILD THE <span>FUTURE</span></h1>
-            <p style="font-size: 20px; max-width: 500px; margin-bottom: 30px;">The automated infrastructure layer for Indian mobile esports starts here.</p>
-            <div class="meta-info" style="max-width: 500px;">
-                <strong>Thank You / Open for Questions</strong><br>
-                <span style="font-size: 14px; text-transform: none; opacity: 0.8;">thilakjeevesh@gmail.com</span>
+            <h1>ARCHITECT THE <span>FUTURE</span></h1>
+            <p style="font-size: 18px; max-width: 550px; margin-bottom: 25px; color: var(--text-muted);">The missing automated operational foundation layer for mobile gaming networks in India begins here.</p>
+            <div class="meta-info" style="max-width: 450px;">
+                <strong>Evaluation Session Open / Thank You</strong><br>
+                <span style="font-size: 13px; text-transform: none; opacity: 0.7;">thilakjeevesh@gmail.com</span>
             </div>
         </div>
 
-        <!-- NAVIGATION CONTROLS -->
+        <!-- INTERACTIVE INTERFACE NAVIGATION CONTROLS -->
         <div class="controls">
-            <button class="btn-nav" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="btn-nav" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="btn-nav" onclick="shiftActiveSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="btn-nav" onclick="shiftActiveSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
-        <div class="slide-number" id="slide-num">SLIDE 1 / 14</div>
-
+        
+        <div class="slide-number" id="slide-tracker">SLIDE 1 / 14</div>
     </div>
 
+    <!-- MAIN SYSTEM LOGIC ARCHITECTURE -->
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const numDisplay = document.getElementById('slide-num');
+        let currentSlidePointer = 0;
+        const totalSlidesArray = document.querySelectorAll('.slide');
+        const activeNumIndicator = document.getElementById('slide-tracker');
+        const controls = document.querySelector('.controls');
+        const downloadBtn = document.getElementById('download-btn');
+        const deckContainer = document.getElementById('deck-wrapper');
 
-        function showSlide(index) {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (index + slides.length) % slides.length;
-            slides[currentSlide].classList.add('active');
-            numDisplay.innerText = `SLIDE ${currentSlide + 1} / ${slides.length}`;
+        // SLIDE NAVIGATION
+        function renderSlideIndex(targetIndex) {
+            totalSlidesArray[currentSlidePointer].classList.remove('active');
+            currentSlidePointer = (targetIndex + totalSlidesArray.length) % totalSlidesArray.length;
+            totalSlidesArray[currentSlidePointer].classList.add('active');
+            activeNumIndicator.innerText = `SLIDE ${currentSlidePointer + 1} / ${totalSlidesArray.length}`;
         }
 
-        function changeSlide(step) {
-            showSlide(currentSlide + step);
+        function shiftActiveSlide(directionStep) {
+            renderSlideIndex(currentSlidePointer + directionStep);
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight') changeSlide(1);
-            if (e.key === 'ArrowLeft') changeSlide(-1);
+        document.addEventListener('keydown', (eventKey) => {
+            if (eventKey.key === 'ArrowRight') shiftActiveSlide(1);
+            if (eventKey.key === 'ArrowLeft') shiftActiveSlide(-1);
         });
+
+        // 🚀 HIGH-RES PIXEL-PERFECT PDF RENDER ENGINE
+        async function generatePixelPerfectPDF() {
+            // 1. Lock the button & show loading state
+            const originalBtnText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating HD PDF... (Please Wait)';
+            downloadBtn.style.pointerEvents = 'none';
+
+            // 2. Hide UI controls so they don't appear in the PDF
+            controls.style.display = 'none';
+            
+            // 3. Initialize jsPDF (Landscape, 1280x720 aspect ratio)
+            const { jsPDF } = window.jspdf;
+            const pdfDocument = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1280, 720] });
+
+            // Store the slide you were currently looking at
+            const startSlideIndex = currentSlidePointer;
+
+            // 4. Loop through every slide, render it to canvas, and add to PDF
+            for (let i = 0; i < totalSlidesArray.length; i++) {
+                
+                // Force the slide to display
+                totalSlidesArray.forEach(slide => slide.classList.remove('active'));
+                totalSlidesArray[i].classList.add('active');
+                
+                // Give the browser 100ms to render the CSS transitions before capturing
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // Take the digital screenshot
+                const canvas = await html2canvas(deckContainer, {
+                    scale: 2, // 2x resolution for crisp text
+                    backgroundColor: '#0f1015', // Forces the dark background
+                    useCORS: true, // Allows the local logo image to render properly
+                    logging: false
+                });
+
+                // Convert canvas to image data
+                const slideImageData = canvas.toDataURL('image/jpeg', 1.0);
+                
+                // Add new page for slides after the first one
+                if (i > 0) pdfDocument.addPage();
+                
+                // Paste the screenshot into the PDF
+                pdfDocument.addImage(slideImageData, 'JPEG', 0, 0, 1280, 720);
+            }
+
+            // 5. Restore the presentation to normal
+            totalSlidesArray.forEach(slide => slide.classList.remove('active'));
+            totalSlidesArray[startSlideIndex].classList.add('active');
+            controls.style.display = 'flex';
+            
+            downloadBtn.innerHTML = originalBtnText;
+            downloadBtn.style.pointerEvents = 'auto';
+
+            // 6. Download the file
+            pdfDocument.save('Tournyx_Esports_Incubation_Pitch.pdf');
+        }
     </script>
 </body>
 </html>
