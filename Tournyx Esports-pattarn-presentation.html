@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournyx Esports | Incubation Pitch Deck</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030305;
+            --surface: #0f1015;
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+        .deck-container { width: 90vw; height: 50.625vw; max-width: 1280px; max-height: 720px; background: var(--surface); border: 1px solid var(--border); border-radius: 24px; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8); overflow: hidden; display: flex; }
+        
+        .slide { position: absolute; inset: 0; padding: 60px 80px; display: none; flex-direction: column; justify-content: center; opacity: 0; transition: opacity 0.5s ease; }
+        .slide.active { display: flex; opacity: 1; }
+
+        .slide-header { font-size: 42px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; margin-bottom: 30px; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: flex; align-items: center; gap: 15px; }
+        .slide-header i { color: var(--primary); }
+
+        /* Typography & Grid Elements */
+        p { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        strong { color: #fff; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        
+        .card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 30px; border-radius: 16px; transition: 0.3s; }
+        .card i { font-size: 28px; color: var(--secondary); margin-bottom: 15px; }
+        .card h3 { font-size: 20px; font-weight: 700; margin-bottom: 10px; color: #fff; }
+        .card p { font-size: 15px; margin: 0; }
+
+        /* Title Slide Layout */
+        .title-slide { text-align: center; align-items: center; justify-content: center; }
+        .main-logo { width: 180px; height: 180px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(168,85,247,0.4)); }
+        .title-slide h1 { font-size: 64px; font-weight: 900; letter-spacing: -2px; margin-bottom: 10px; }
+        .title-slide h1 span { color: var(--primary); text-shadow: 0 0 30px rgba(99,102,241,0.5); }
+        .title-slide h2 { font-size: 20px; color: var(--text-muted); font-weight: 400; margin-bottom: 40px; max-width: 600px; }
+        .meta-info { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 20px; width: 100%; max-width: 400px; }
+
+        /* Watermark Logo */
+        .watermark { position: absolute; top: 40px; right: 40px; width: 50px; height: 50px; object-fit: contain; opacity: 0.15; }
+
+        /* Controls */
+        .controls { position: absolute; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 10; }
+        .btn-nav { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 18px; transition: 0.3s; }
+        .btn-nav:hover { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px rgba(99,102,241,0.4); }
+        .slide-number { position: absolute; bottom: 42px; left: 40px; font-size: 14px; color: var(--text-muted); font-weight: 600; letter-spacing: 1px; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 18px; text-align: left; border-bottom: 1px solid var(--border); font-size: 16px; }
+        th { background: rgba(99,102,241,0.1); color: #fff; font-weight: 700; text-transform: uppercase; font-size: 14px; letter-spacing: 1px; }
+
+        /* Highlight Block */
+        .highlight-box { background: rgba(99, 102, 241, 0.05); border-left: 4px solid var(--primary); padding: 25px; border-radius: 0 16px 16px 0; margin-top: 20px; }
+        .highlight-box p { margin: 0; font-size: 18px; color: #fff; font-style: italic; }
+
+        @media print {
+            body { background: #030305 !important; }
+            .deck-container { width: 100%; height: 100%; max-width: none; max-height: none; border: none; box-shadow: none; border-radius: 0; }
+            .slide { page-break-after: always; display: flex !important; opacity: 1 !important; position: relative; width: 100vw; height: 100vh; }
+            .controls { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="deck-container">
+        
+        <!-- SLIDE 1: TITLE SLIDE -->
+        <div class="slide active title-slide">
+            <img src="1000093706.png" class="main-logo" alt="Tournyx Logo">
+            <h1>TOURNYX <span>ESPORTS</span></h1>
+            <h2>Architecting the Next-Gen Automated Infrastructure for Mobile Gaming in India.</h2>
+            <div class="meta-info">
+                <strong>Thilakeshwaran</strong><br>Founder & Lead Developer<br><span style="font-size:12px; opacity:0.6;">Prototype Proposal for Academic Incubation</span>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: THE PROBLEM -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-triangle-exclamation"></i> The Broken State of Amateur Esports</h2>
+            <div class="grid-3" style="margin-top: 40px;">
+                <div class="card">
+                    <i class="fa-solid fa- people-arrows"></i>
+                    <h3>Manual Friction</h3>
+                    <p>Millions of grassroots competitive mobile gamers are completely trapped coordinating brackets manually via messy WhatsApp and Discord groups.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                    <h3>Data Sync Lag</h3>
+                    <p>Tournament administrators match up data manually on spreadsheets. This creates huge score lag, calculation mistakes, and slows operations.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                    <h3>Fragmented Layer</h3>
+                    <p>Amateur players have no centralized profile ecosystem to showcase verified lifetime gaming metrics or career history securely without community bias.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: MARKET OPPORTUNITY -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-chart-line"></i> The Indian Gaming Explosion</h2>
+            <div class="grid-2">
+                <div>
+                    <p style="font-size: 22px; color: #fff; font-weight: 700; margin-bottom: 30px;">India has naturally evolved into the single largest mobile gaming consumer market on Earth.</p>
+                    <p>Empowered by low-cost high-speed mobile data data networks, regional tier-2 and tier-3 youth have transformed casual gameplay into a massive competitive structural economy.</p>
+                </div>
+                <div class="grid-2" style="gap: 20px;">
+                    <div class="card" style="border-color: rgba(34,197,94,0.3);">
+                        <h3 style="font-size: 36px; color: #22c55e;">8.45B</h3>
+                        <p>Game Downloads inside India (FY 24-25 market high)</p>
+                    </div>
+                    <div class="card" style="border-color: rgba(99,102,241,0.3);">
+                        <h3 style="font-size: 36px; color: var(--primary);">$3.7B</h3>
+                        <p>Indian Market Evaluation Base Valuation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: THE MOBILE DOMINANCE -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-mobile-screen-button"></i> Mobile-First Demographic</h2>
+            <div class="grid-2">
+                <div class="card" style="background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2);">
+                    <i class="fa-solid fa-users" style="color: var(--secondary);"></i>
+                    <h3 style="font-size: 24px;">488+ Million Active Gamers</h3>
+                    <p style="font-size: 16px; margin-top: 10px;">Over 90% of the entire Indian gaming collective access esports purely through low-to-mid tier smartphones rather than high-end PC rigs.</p>
+                </div>
+                <div>
+                    <p style="margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>Age Bracket:</strong> 77% of target infrastructure consumers fall perfectly between 18 and 34 years old.</p>
+                    <p style="margin-bottom: 15px;"><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>Core Titles:</strong> Highly intense community battlegrounds such as Free Fire MAX and BGMI dictate structural traffic patterns.</p>
+                    <p><i class="fa-solid fa-circle-check" style="color:var(--primary); margin-right: 10px;"></i> <strong>The Critical Need:</strong> High-performance, zero-bloat automated systems engineered to execute inside simple mobile web views.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: THE SOLUTION -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-rocket"></i> The Tournyx Platform Solution</h2>
+            <div class="highlight-box">
+                <p>"Tournyx safely clears out messy human operation overhead loops. By replacing manual entry chains with data-driven code modules, we establish an instantaneous database engine for regional mobile competitive formats."</p>
+            </div>
+            <p style="margin-top: 30px; font-size: 20px; color: #fff; text-align: center;"><strong>Automation Layer + Unbiased Ecosystem Integrity = Scalable Infrastructure</strong></p>
+        </div>
+
+        <!-- SLIDE 6: FRONTEND ARCHITECTURE -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-sliders"></i> Seamless Frontend UX Architecture</h2>
+            <div class="grid-3" style="margin-top: 20px;">
+                <div class="card">
+                    <i class="fa-solid fa-id-card"></i>
+                    <h3>Strict Registration</h3>
+                    <p>Clean 10-digit telephone logic parsing and verification locks unique in-game identification data securely to active entries.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    <h3>Interactive Visuals</h3>
+                    <p>Live responsive tournament dynamic bracket maps show layout brackets adapting smoothly across mobile screen dimensions.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                    <h3>Zero Installation</h3>
+                    <p>Operates entirely through optimized web layouts. Zero download constraints mean immediate, friction-free platform interactions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: BACKEND STABILITY -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-server"></i> High-Velocity Backend Core</h2>
+            <div class="grid-2">
+                <div>
+                    <p style="margin-bottom: 20px;">The backend framework is built specifically to process and route rapid application commands synchronously while tracking multi-player registration tables smoothly.</p>
+                    <div class="card" style="background: rgba(34,197,94,0.03); border-color: rgba(34,197,94,0.2);">
+                        <h4 style="color:#22c55e; margin-bottom: 5px;"><i class="fa-solid fa-shield-halved"></i> Automated Bouncer Logic</h4>
+                        <p style="font-size:14px;">Ensures security protocols analyze input traffic, blocking automated bot requests or empty form submissions instantly.</p>
+                    </div>
+                </div>
+                <div class="card" style="background: rgba(0,0,0,0.2);">
+                    <h3 style="font-family: monospace; font-size: 16px; color: var(--secondary); margin-bottom: 10px;">// Core Logic Framework</h3>
+                    <p style="font-family: monospace; font-size: 13px; color: #cbd5e1; line-height: 1.4;">
+                        function doPost(e) {<br>
+                        &nbsp;&nbsp;const role = e.parameter.role;<br>
+                        &nbsp;&nbsp;if(role === "other") { <br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;role = e.parameter.custom_role;<br>
+                        &nbsp;&nbsp;}<br>
+                        &nbsp;&nbsp;sheet.appendRow([new Date(), name, email, role]);<br>
+                        &nbsp;&nbsp;sendThemedConfirmation(email, role);<br>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: THE REGIONAL ADVANTAGE -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-map-location-dot"></i> Capturing Regional Markets</h2>
+            <div class="grid-2">
+                <div>
+                    <p style="font-size: 20px; color:#fff; font-weight:600;">Two-thirds of India's aggregate mobile gaming communities now flourish outside Tier-1 urban metropolises.</p>
+                    <p style="margin-top: 15px;">Tamil Nadu stands out as a booming center for competitive esports talent. Tournyx strategically taps directly into these highly passionate regional communities before rolling out nationwide scaling frameworks.</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <i class="fa-solid fa-house-laptop" style="font-size: 48px; color: var(--primary);"></i>
+                    <h3 style="margin-top: 15px;">The Grassroots Launchpad</h3>
+                    <p>Providing formal tournament framework structures to the local gaming circles that global publishers overlook.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: REVENUE MODEL -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-sack-dollar"></i> Sustainable Monetization Architecture</h2>
+            <table style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Revenue Flow Channel</th>
+                        <th>Operational Execution Strategy</th>
+                        <th>Target Monetization Core</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Programmatic Distribution</strong></td>
+                        <td>High-fill web components via networks like AdMob or Unity Ads</td>
+                        <td>Consistent passive yields scaled on daily match traffic</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Convenience Logistics Fees</strong></td>
+                        <td>Micro-percentage handling fee on prize pool transactions</td>
+                        <td>Secures transaction volumes as platform trust scales</td>
+                    </tr>
+                    <tr>
+                        <td><strong>B2B Software Access (SaaS)</strong></td>
+                        <td>Premium tools, analytics access, and custom overlays for independent hosts</td>
+                        <td>Monthly recurring operational subscription packages</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- SLIDE 10: GO-TO-MARKET -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-bullhorn"></i> Go-To-Market & Viral Loops</h2>
+            <div class="grid-3" style="margin-top: 30px;">
+                <div class="card">
+                    <h3 style="color: var(--primary);">01 / Creator Funnels</h3>
+                    <p style="margin-top:10px;">We drive our backend web traffic directly to regional YouTube streaming casters, securing high-impact community integration loops for free.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: var(--secondary);">02 / The Legends League</h3>
+                    <p style="margin-top:10px;">Running organized, high-visibility neutral circuit events to prove software performance limits and build deep player trust.</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: #22c55e;">03 / Talent Pipelines</h3>
+                    <p style="margin-top:10px;">Recruiting an agile, dedicated student developer and moderation task force directly from campuses to accelerate growth.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: COMPETITIVE ADVANTAGE -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-trophy"></i> Why Tournyx Dominates</h2>
+            <div class="grid-2" style="margin-top: 20px;">
+                <div class="card" style="border-left: 4px solid var(--primary);">
+                    <h3 style="margin-bottom: 5px;">Traditional Manual Tournaments</h3>
+                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> 48-Hour delay times clearing match records.</p>
+                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> High probability of human data tracking slip-ups.</p>
+                    <p style="font-size: 14px;"><i class="fa-solid fa-xmark" style="color:#ef4444; margin-right: 8px;"></i> Complicated, disjointed cross-platform configurations.</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #22c55e; background: rgba(34,197,94,0.02);">
+                    <h3 style="margin-bottom: 5px; color:#22c55e;">The Automated Tournyx Advantage</h3>
+                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-check" style="color:#22c55e; margin-right: 8px;"></i> Instant automated group bracket rendering.</p>
+                    <p style="font-size: 14px; margin-bottom: 8px;"><i class="fa-solid fa-check" style="color:#22c55e; margin-right: 8px;"></i> Zero local storage overhead requirements via optimized web views.</p>
+                    <p style="font-size: 14px;"><i class="fa-solid fa-check" style="color:#22c55e; margin-right: 8px;"></i> Complete community neutrality built to scale effortlessly.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 12: PROTOTYPE STATUS -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-code"></i> Operational Blueprint Status</h2>
+            <div class="grid-2" style="margin-top: 30px;">
+                <div>
+                    <p style="font-size: 20px; color:#fff; font-weight:600; margin-bottom: 15px;">The fundamental system components are built, live, and actively listening for data endpoints.</p>
+                    <p>Our custom frontend layouts capture deep form data structures flawlessly. Secure background automated triggers capture these variables instantly, routing clean responses straight to our sheet database arrays while firing out immediate confirmation emails.</p>
+                </div>
+                <div class="card" style="border-color: rgba(168,85,247,0.4); text-align: center;">
+                    <i class="fa-solid fa-circle-nodes" style="color: var(--secondary); font-size: 36px;"></i>
+                    <h3 style="margin-top: 10px;">Ready for Beta Validation</h3>
+                    <p style="font-size: 14px; margin-top: 5px;">Core data pipelines are fully secured, verified, and prepped for deep platform alpha trials alongside active grassroots gaming clans.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 13: THE INCUBATION ASK -->
+        <div class="slide">
+            <img src="1000093706.png" class="watermark">
+            <h2 class="slide-header"><i class="fa-solid fa-graduation-cap"></i> Academic Incubation Partnership</h2>
+            <div class="grid-3" style="margin-top: 40px;">
+                <div class="card">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <h3>Technical Guidance</h3>
+                    <p>Seeking software faculty mentorship to optimize database structures and design server load configurations.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <h3>Lab Infrastructure</h3>
+                    <p>Leveraging high-speed lab development sandbox setups to safely execute stress tests on concurrent database spikes.</p>
+                </div>
+                <div class="card">
+                    <i class="fa-solid fa-award"></i>
+                    <h3>Institutional Pride</h3>
+                    <p>Representing our college proudly at major state tech innovation summits and venture forums like StartupTN.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 14: CONCLUSION -->
+        <div class="slide title-slide">
+            <img src="1000093706.png" class="main-logo" alt="Tournyx Logo">
+            <h1>LET'S BUILD THE <span>FUTURE</span></h1>
+            <p style="font-size: 20px; max-width: 500px; margin-bottom: 30px;">The automated infrastructure layer for Indian mobile esports starts here.</p>
+            <div class="meta-info" style="max-width: 500px;">
+                <strong>Thank You / Open for Questions</strong><br>
+                <span style="font-size: 14px; text-transform: none; opacity: 0.8;">thilakjeevesh@gmail.com</span>
+            </div>
+        </div>
+
+        <!-- NAVIGATION CONTROLS -->
+        <div class="controls">
+            <button class="btn-nav" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="btn-nav" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <div class="slide-number" id="slide-num">SLIDE 1 / 14</div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const numDisplay = document.getElementById('slide-num');
+
+        function showSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            numDisplay.innerText = `SLIDE ${currentSlide + 1} / ${slides.length}`;
+        }
+
+        function changeSlide(step) {
+            showSlide(currentSlide + step);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+    </script>
+</body>
+</html>
