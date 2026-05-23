@@ -514,7 +514,7 @@
             if (eventKey.key === 'ArrowLeft') shiftActiveSlide(-1);
         });
 
-        // 🚀 HIGH-RES PIXEL-PERFECT PDF RENDER ENGINE
+        // 🚀 HIGH-RES PIXEL-PERFECT PDF RENDER ENGINE (MOBILE SQUISH FIX ADDED)
         async function generatePixelPerfectPDF() {
             // 1. Lock the button & show loading state
             const originalBtnText = downloadBtn.innerHTML;
@@ -524,42 +524,56 @@
             // 2. Hide UI controls so they don't appear in the PDF
             controls.style.display = 'none';
             
-            // 3. Initialize jsPDF (Landscape, 1280x720 aspect ratio)
+            // 3. FORCE DESKTOP DIMENSIONS ON MOBILE
+            // This injects a temporary style that forces your phone to render the slides as a perfect 16:9 desktop layout just for the screenshot.
+            const forceDesktopStyle = document.createElement('style');
+            forceDesktopStyle.innerHTML = `
+                .deck-container { width: 1280px !important; height: 720px !important; min-height: 720px !important; max-width: 1280px !important; border-radius: 0 !important; }
+                .grid-2 { grid-template-columns: 1fr 1fr !important; gap: 30px !important; }
+                .grid-3 { grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; }
+                .slide-header { font-size: 34px !important; }
+                .title-slide h1 { font-size: 56px !important; }
+                .title-slide h2 { font-size: 18px !important; }
+                .slide { padding: 50px 60px !important; overflow: hidden !important; }
+                table { display: table !important; overflow: visible !important; white-space: normal !important; }
+                th, td { padding: 15px !important; font-size: 14px !important; }
+            `;
+            document.head.appendChild(forceDesktopStyle);
+            
+            // Reset scroll position to prevent weird empty spaces on mobile captures
+            window.scrollTo(0, 0); 
+
+            // 4. Initialize jsPDF
             const { jsPDF } = window.jspdf;
             const pdfDocument = new jsPDF({ orientation: 'landscape', unit: 'px', format: [1280, 720] });
-
-            // Store the slide you were currently looking at
             const startSlideIndex = currentSlidePointer;
 
-            // 4. Loop through every slide, render it to canvas, and add to PDF
+            // 5. Loop through every slide and capture
             for (let i = 0; i < totalSlidesArray.length; i++) {
-                
-                // Force the slide to display
                 totalSlidesArray.forEach(slide => slide.classList.remove('active'));
                 totalSlidesArray[i].classList.add('active');
                 
-                // Give the browser 100ms to render the CSS transitions before capturing
-                await new Promise(resolve => setTimeout(resolve, 100));
+                // Give the browser 150ms to snap the CSS into the perfect desktop proportions
+                await new Promise(resolve => setTimeout(resolve, 150));
 
-                // Take the digital screenshot
                 const canvas = await html2canvas(deckContainer, {
-                    scale: 2, // 2x resolution for crisp text
-                    backgroundColor: '#0f1015', // Forces the dark background
-                    useCORS: true, // Allows the local logo image to render properly
-                    logging: false
+                    scale: 2, 
+                    backgroundColor: '#0f1015', 
+                    useCORS: true, 
+                    logging: false,
+                    width: 1280, // Force engine to read it as 1280px wide
+                    height: 720,
+                    windowWidth: 1280,
+                    windowHeight: 720
                 });
 
-                // Convert canvas to image data
                 const slideImageData = canvas.toDataURL('image/jpeg', 1.0);
-                
-                // Add new page for slides after the first one
                 if (i > 0) pdfDocument.addPage();
-                
-                // Paste the screenshot into the PDF
                 pdfDocument.addImage(slideImageData, 'JPEG', 0, 0, 1280, 720);
             }
 
-            // 5. Restore the presentation to normal
+            // 6. Restore normal mobile view immediately after capture
+            document.head.removeChild(forceDesktopStyle);
             totalSlidesArray.forEach(slide => slide.classList.remove('active'));
             totalSlidesArray[startSlideIndex].classList.add('active');
             controls.style.display = 'flex';
@@ -567,7 +581,7 @@
             downloadBtn.innerHTML = originalBtnText;
             downloadBtn.style.pointerEvents = 'auto';
 
-            // 6. Download the file
+            // 7. Download the perfectly proportioned file
             pdfDocument.save('Tournyx_Esports_Incubation_Pitch.pdf');
         }
     </script>
