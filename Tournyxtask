@@ -3,347 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tournyx Engine 2.0 - Master Web Blueprint</title>
+    <title>Tournyx Engine 2.0 - 40 Slide Master Blueprint</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
         
         body {
             font-family: 'Rajdhani', sans-serif;
-            background-color: #090A0F;
+            background-color: #050508;
             color: #e2e8f0;
-            line-height: 1.6;
+            overflow-x: hidden;
         }
         
-        h1, h2, h3, .esports-font {
+        .title-font { font-family: 'Orbitron', sans-serif; }
+        
+        .slide {
+            width: 100%;
+            max-width: 1100px;
+            aspect-ratio: 16/9;
+            margin: 2rem auto;
+            background: linear-gradient(145deg, #090A0F, #12141D);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.05), inset 0 0 20px rgba(139, 92, 246, 0.05);
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #8B5CF6, #06B6D4);
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 2rem;
             font-family: 'Orbitron', sans-serif;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 3rem;
+            font-weight: 900;
         }
 
-        .neon-purple { color: #8B5CF6; }
-        .neon-cyan { color: #06B6D4; }
+        .neon-text-purple { text-shadow: 0 0 10px rgba(139, 92, 246, 0.7); color: #c4b5fd; }
+        .neon-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.7); color: #67e8f9; }
         
-        .glow-border {
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15), inset 0 0 10px rgba(6, 182, 212, 0.05);
+        /* Print Styles for flawless PDF generation */
+        @media print {
+            body { background-color: #090A0F !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            #download-ui { display: none !important; }
+            .slide {
+                margin: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: none !important;
+                aspect-ratio: auto !important;
+                page-break-after: always;
+                page-break-inside: avoid;
+            }
         }
-        
-        .glow-text-cyan { text-shadow: 0 0 8px rgba(6, 182, 212, 0.6); }
-        .glow-text-purple { text-shadow: 0 0 8px rgba(139, 92, 246, 0.6); }
 
-        .slide-container {
-            page-break-inside: avoid;
-            margin-bottom: 2rem;
-        }
-
-        #download-btn {
-            transition: all 0.3s ease;
-        }
-        #download-btn:hover {
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.8);
-            transform: scale(1.05);
-        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #050508; }
+        ::-webkit-scrollbar-thumb { background: #8B5CF6; border-radius: 5px; }
     </style>
 </head>
-<body class="antialiased min-h-screen relative pb-20">
+<body class="antialiased selection:bg-purple-500 selection:text-white">
 
-    <!-- Floating Download Button -->
-    <div class="fixed bottom-8 right-8 z-50" id="action-buttons">
-        <button onclick="generatePDF()" id="download-btn" class="bg-gradient-to-r from-purple-700 to-cyan-600 text-white font-bold py-4 px-8 rounded-full border-2 border-cyan-400 uppercase tracking-widest flex items-center gap-3">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Download PDF
+    <!-- Sticky Header UI -->
+    <div id="download-ui" class="sticky top-0 z-50 bg-[#090A0F]/90 backdrop-blur-md border-b border-purple-500/30 p-4 flex justify-between items-center px-8 shadow-lg shadow-purple-900/20">
+        <div>
+            <h1 class="title-font text-xl font-bold neon-text-cyan tracking-widest uppercase">Tournyx Engine 2.0</h1>
+            <p class="text-sm text-gray-400">40-Slide Web Preview Master Deck</p>
+        </div>
+        <button onclick="window.print()" class="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-500 hover:to-cyan-400 text-white title-font font-bold py-3 px-8 rounded shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-transform transform hover:scale-105 tracking-widest">
+            DOWNLOAD PDF
         </button>
     </div>
 
-    <!-- Main Presentation Container -->
-    <div id="presentation-content" class="max-w-5xl mx-auto pt-12 px-6">
-
-        <!-- Cover Slide -->
-        <div class="slide-container bg-[#12141D] glow-border rounded-2xl p-12 text-center relative overflow-hidden flex flex-col justify-center min-h-[600px]">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 via-cyan-400 to-purple-600"></div>
-            <h3 class="neon-cyan text-xl tracking-[0.3em] uppercase mb-4 font-bold">System Active</h3>
-            <h1 class="text-6xl md:text-7xl font-black text-white mb-6 uppercase tracking-wider glow-text-purple">Tournyx Engine 2.0</h1>
-            <h2 class="text-3xl text-gray-300 mb-8 esports-font">The Awakening</h2>
-            <p class="text-xl text-gray-400 max-w-2xl mx-auto">Master Web Deployment & Execution Blueprint<br>100% Serverless Edge Architecture</p>
-            <div class="mt-12 inline-block px-6 py-2 border border-cyan-500/50 rounded-full text-cyan-400 text-sm tracking-widest bg-cyan-900/20">
-                CONFIDENTIAL DEVELOPMENT DIRECTIVE
-            </div>
+    <div class="px-4 pb-20">
+        
+        <!-- SLIDE 1 -->
+        <div class="slide items-center text-center">
+            <h3 class="neon-text-cyan text-2xl tracking-[0.4em] uppercase mb-6 font-bold title-font">System Active</h3>
+            <h1 class="text-6xl md:text-8xl font-black text-white mb-6 uppercase tracking-wider neon-text-purple title-font">Tournyx 2.0</h1>
+            <h2 class="text-4xl text-gray-200 mb-8 title-font">The Awakening</h2>
+            <p class="text-2xl text-gray-400 max-w-3xl">100% Web-Based Esports Player System<br>Master Execution Blueprint</p>
+            <div class="slide-number">01</div>
         </div>
 
-        <!-- Section 1 -->
-        <div class="mt-12 text-center mb-8">
-            <h2 class="text-3xl esports-font text-white border-b-2 border-purple-600 inline-block pb-2">SECTION 1: SYSTEM OVERVIEW & VISION</h2>
+        <!-- SLIDE 2 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Executive Summary</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">The Tournyx Engine 2.0 transforms standard Free Fire tournament management into a real-life, interactive "Player System". Players will log in, complete daily tasks, and track their stats live via our new high-speed Web Terminal.</p>
+            <div class="slide-number">02</div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Slide 2 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl neon-cyan mb-4 esports-font border-l-4 border-cyan-400 pl-4">02. Executive Summary</h3>
-                <ul class="space-y-3 text-gray-300 text-lg">
-                    <li><strong class="text-white">The Mission:</strong> Transform standard esports tournament management into a real-life, interactive "Player System" directly in the web browser.</li>
-                    <li><strong class="text-white">The Inspiration:</strong> Modeled after the <em>Solo Leveling</em> HUD aesthetics.</li>
-                    <li><strong class="text-white">The Result:</strong> Players complete daily practice tasks, track skill growth on a live radar chart, and unlock mystery loot crates entirely through a high-performance web interface.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 3 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl neon-purple mb-4 esports-font border-l-4 border-purple-500 pl-4">03. The 100% Web Directive</h3>
-                <ul class="space-y-3 text-gray-300 text-lg">
-                    <li><strong class="text-white text-red-400">Zero Legacy Systems:</strong> We have officially migrated entirely away from Google Sheets and Apps Script.</li>
-                    <li><strong class="text-white text-cyan-400">100% Web Focus:</strong> Eliminating App Store delays by focusing purely on a high-speed web application.</li>
-                    <li><strong class="text-white">Single Source of Truth:</strong> Supabase (PostgreSQL) handles the database. Cloudflare handles Edge Compute.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 4 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8 md:col-span-2">
-                <h3 class="text-2xl text-white mb-4 esports-font border-l-4 border-gray-100 pl-4">04. Team Roles & Architecture Stack</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                    <div class="bg-[#090A0F] p-4 rounded-lg border border-purple-500/20">
-                        <h4 class="text-purple-400 font-bold mb-2">Team 1 (Web Core Engine)</h4>
-                        <p class="text-sm text-gray-400">React.js/JavaScript logic, state management, and real-time Supabase WebSocket data binding.</p>
-                    </div>
-                    <div class="bg-[#090A0F] p-4 rounded-lg border border-cyan-500/20">
-                        <h4 class="text-cyan-400 font-bold mb-2">Team 2 (Backend & Algo)</h4>
-                        <p class="text-sm text-gray-400">Supabase DB architecture, Cloudflare Edge Workers, Power Level mathematics, and RLS.</p>
-                    </div>
-                    <div class="bg-[#090A0F] p-4 rounded-lg border border-pink-500/20">
-                        <h4 class="text-pink-400 font-bold mb-2">Team 3 (Web UI & Aesthetics)</h4>
-                        <p class="text-sm text-gray-400">UI generation (v0.dev), Tailwind CSS, landing page design, and modal animations.</p>
-                    </div>
-                </div>
-            </div>
+        <!-- SLIDE 3 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">The Web-Only Directive</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li><strong class="text-red-400">Zero Legacy:</strong> 100% migration away from Google Sheets & Apps Script.</li>
+                <li><strong class="text-cyan-400">Instant Access:</strong> No mobile app store downloads required. Everything runs natively in the browser.</li>
+                <li><strong class="text-white">Single Source:</strong> Supabase (PostgreSQL) is our sole data engine.</li>
+            </ul>
+            <div class="slide-number">03</div>
         </div>
 
-        <!-- Section 2 -->
-        <div class="mt-16 text-center mb-8">
-            <h2 class="text-3xl esports-font text-white border-b-2 border-cyan-500 inline-block pb-2">SECTION 2: TEAM 3 - WEB UI DEPLOYMENT</h2>
+        <!-- SLIDE 4 -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-l-4 border-gray-100 pl-4">The Tech Stack</h2>
+            <div class="grid grid-cols-2 gap-8 text-xl">
+                <div class="bg-black/50 p-6 rounded-lg border border-purple-500/30">
+                    <h3 class="text-purple-400 font-bold mb-4 title-font">Frontend</h3>
+                    <p>React.js / Vanilla JS</p>
+                    <p>Tailwind CSS</p>
+                    <p>Chart.js (Radar Graphs)</p>
+                </div>
+                <div class="bg-black/50 p-6 rounded-lg border border-cyan-500/30">
+                    <h3 class="text-cyan-400 font-bold mb-4 title-font">Backend</h3>
+                    <p>Supabase (DB & Auth)</p>
+                    <p>Cloudflare Workers (Compute)</p>
+                    <p>Cloudflare Pages (Hosting)</p>
+                </div>
+            </div>
+            <div class="slide-number">04</div>
         </div>
 
-        <div class="grid grid-cols-1 gap-8">
-            <!-- Slide 6 & 7 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8 flex flex-col md:flex-row gap-8">
-                <div class="flex-1">
-                    <h3 class="text-2xl neon-cyan mb-4 esports-font border-l-4 border-cyan-400 pl-4">06. Hosting Configuration</h3>
-                    <p class="text-gray-300 mb-4">Deploy a lightning-fast web terminal with zero routing conflicts using Cloudflare Pages.</p>
-                    <ul class="list-disc list-inside text-gray-400 space-y-2">
-                        <li>Repository: <code>tournyx-web-engine</code> on GitHub.</li>
-                        <li>Connect directly to Cloudflare Pages.</li>
-                    </ul>
-                </div>
-                <div class="flex-1 bg-red-900/10 border border-red-500/30 rounded-lg p-6">
-                    <h3 class="text-2xl text-red-400 mb-4 esports-font border-l-4 border-red-500 pl-4">07. The Strict Directive</h3>
-                    <p class="text-white font-bold text-lg mb-2">CRITICAL RULE:</p>
-                    <p class="text-gray-300">The primary entry point and landing page file <strong>MUST</strong> be named <code class="text-cyan-300 bg-black px-2 py-1 rounded">home.html</code>.</p>
-                    <p class="text-red-400 mt-2 font-bold uppercase text-sm">Forbidden: Do NOT use index.html under any circumstances. All routing must respect the home.html structure.</p>
-                </div>
-            </div>
-
-            <!-- Slide 8, 9, 10 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl text-white mb-6 esports-font border-l-4 border-purple-500 pl-4">08-10. UI Generation & Grid Layout</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-purple-400 font-bold mb-2">AI Generation (v0.dev)</h4>
-                        <p class="text-gray-400 text-sm mb-4">Prompt: <em>"Generate a dark-mode responsive web HUD overlay in Tailwind CSS. Background #090A0F. Include a glassmorphism backdrop containing a radar chart, daily quest checklist, role selection tabs, and glowing inventory borders."</em></p>
-                        <h4 class="text-cyan-400 font-bold mb-2">The Awakening Animation</h4>
-                        <p class="text-gray-400 text-sm">When <code>[ OPEN SYSTEM ]</code> is clicked, a translucent modal (<code>backdrop-blur-xl</code>) locks the screen. A neon cyan loading bar fills 0% to 100% reading "SYSTEM INITIALIZING...".</p>
-                    </div>
-                    <div class="bg-[#090A0F] rounded-lg p-4 border border-gray-800">
-                        <h4 class="text-white font-bold mb-3 text-center border-b border-gray-700 pb-2">8-Module Engine Grid</h4>
-                        <ul class="grid grid-cols-2 gap-2 text-sm text-gray-400 text-center">
-                            <li class="bg-purple-900/20 p-2 rounded border border-purple-500/20">1. Player Analysis</li>
-                            <li class="bg-purple-900/20 p-2 rounded border border-purple-500/20">2. Today's Tasks</li>
-                            <li class="bg-purple-900/20 p-2 rounded border border-purple-500/20">3. AI Recs</li>
-                            <li class="bg-purple-900/20 p-2 rounded border border-purple-500/20">4. Role & Training</li>
-                            <li class="bg-cyan-900/20 p-2 rounded border border-cyan-500/20">5. Player Evolution</li>
-                            <li class="bg-cyan-900/20 p-2 rounded border border-cyan-500/20">6. Wallet</li>
-                            <li class="bg-cyan-900/20 p-2 rounded border border-cyan-500/20">7. Hidden Quests</li>
-                            <li class="bg-cyan-900/20 p-2 rounded border border-cyan-500/20">8. System Log</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+        <!-- SLIDE 5 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Team Divisions</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li><strong class="text-purple-400">Team 1:</strong> Web Logic, React, WebSockets, & State.</li>
+                <li><strong class="text-cyan-400">Team 2:</strong> Supabase DB, Edge Workers, & Algorithms.</li>
+                <li><strong class="text-pink-400">Team 3:</strong> HTML Layouts, Tailwind CSS, & Modal Animations.</li>
+            </ul>
+            <div class="slide-number">05</div>
         </div>
 
-        <!-- Section 3 -->
-        <div class="mt-16 text-center mb-8">
-            <h2 class="text-3xl esports-font text-white border-b-2 border-purple-600 inline-block pb-2">SECTION 3: TEAM 1 - WEB CORE ENGINE</h2>
+        <!-- SLIDE 6 (Team 3 Focus) -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-b-2 border-purple-600 pb-2 inline-block">PHASE 1: TEAM 3 UI/UX</h2>
+            <h3 class="text-3xl neon-text-purple title-font mb-6">Cloudflare Pages Hosting</h3>
+            <p class="text-2xl text-gray-300 leading-relaxed">Team 3 will deploy a lightning-fast web terminal with zero routing conflicts. Create the repository <code>tournyx-web-engine</code> and link it directly to Cloudflare Pages for instant edge delivery.</p>
+            <div class="slide-number">06</div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Slide 13 & 14 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl neon-purple mb-4 esports-font border-l-4 border-purple-500 pl-4">13-14. React State & Native Auth</h3>
-                <ul class="space-y-4 text-gray-300">
-                    <li><strong class="text-white">Objective:</strong> Bring static <code>home.html</code> to life with dynamic state management via <code>@supabase/supabase-js</code>.</li>
-                    <li><strong class="text-white">Zero Reloads:</strong> Ensure the web page never requires a hard reload when stats change.</li>
-                    <li><strong class="text-white">Native Web Auth:</strong> Attach Supabase Auth to the <code>[ SYSTEM AWAKENING ]</code> button. Store JWT tokens in HTTP-only cookies.</li>
-                </ul>
+        <!-- SLIDE 7 -->
+        <div class="slide">
+            <h2 class="text-4xl text-red-500 title-font mb-8 border-l-4 border-red-500 pl-4">The Golden Rule: home.html</h2>
+            <div class="bg-red-900/20 border border-red-500/50 p-8 rounded-lg">
+                <p class="text-3xl text-white font-bold mb-4">CRITICAL DIRECTIVE:</p>
+                <p class="text-2xl text-gray-300">The primary entry point and landing page file MUST be named <strong>home.html</strong>. Do NOT use index.html for root routing under any circumstances.</p>
             </div>
-
-            <!-- Slide 15 & 16 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl neon-cyan mb-4 esports-font border-l-4 border-cyan-400 pl-4">15-16. WebSockets & Radar Animation</h3>
-                <ul class="space-y-4 text-gray-300">
-                    <li><strong class="text-white">The Magic:</strong> Configure a Supabase WebSocket listener on the <code>player_stats</code> table. Payload is pushed to browser in milliseconds.</li>
-                    <li><strong class="text-white">Chart.js Injection:</strong> Map incoming WebSocket payload directly to the Chart.js radar instance.</li>
-                    <li><strong class="text-white">Visual Feedback:</strong> Write JS logic: if <code>new_stat > old_stat</code>, the HTML element flashes neon green instantly.</li>
-                </ul>
-            </div>
-
-            <!-- Slide 17 & 18 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8 md:col-span-2 flex flex-col md:flex-row gap-8">
-                <div class="flex-1">
-                    <h3 class="text-2xl text-white mb-4 esports-font border-l-4 border-gray-100 pl-4">17. Role Selection State</h3>
-                    <p class="text-gray-400">When a player clicks a new role tab (e.g., Rusher to Sniper), JS intercepts the click, sends a fast PATCH request to backend, clears the DOM task array, and maps new Sniper-focused tasks seamlessly.</p>
-                </div>
-                <div class="flex-1">
-                    <h3 class="text-2xl text-white mb-4 esports-font border-l-4 border-gray-100 pl-4">18. Push Notifications API</h3>
-                    <p class="text-gray-400">Request browser notification permissions. When WebSocket detects an Urgent Quest, trigger native browser alert: <br><span class="text-cyan-400 font-bold">"🚨 URGENT QUEST: Your Aim dropped. Secure 10 Headshots."</span></p>
-                </div>
-            </div>
+            <div class="slide-number">07</div>
         </div>
 
-        <!-- Section 4 -->
-        <div class="mt-16 text-center mb-8">
-            <h2 class="text-3xl esports-font text-white border-b-2 border-cyan-500 inline-block pb-2">SECTION 4: TEAM 2 - BACKEND & ALGORITHMS</h2>
+        <!-- SLIDE 8 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">AI Web Generation (v0.dev)</h2>
+            <p class="text-2xl text-gray-300 mb-6">Prompt v0.dev to generate the core UI:</p>
+            <blockquote class="text-xl text-cyan-200 bg-cyan-900/20 p-6 rounded border-l-4 border-cyan-500 italic">
+                "Generate a dark-mode responsive web HUD overlay in Tailwind CSS. Background #090A0F. Include a glassmorphism backdrop containing a radar chart, daily quest checklist, and glowing inventory borders."
+            </blockquote>
+            <div class="slide-number">08</div>
         </div>
 
-        <div class="grid grid-cols-1 gap-8">
-            <!-- Slide 21 & 22 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8 flex flex-col md:flex-row gap-8">
-                <div class="flex-1">
-                    <h3 class="text-2xl neon-purple mb-4 esports-font border-l-4 border-purple-500 pl-4">21. PostgreSQL Schema</h3>
-                    <ul class="text-sm text-gray-300 space-y-2">
-                        <li><code class="text-cyan-300">profiles</code>: Username, Rank Tier, Power Level.</li>
-                        <li><code class="text-cyan-300">player_stats</code>: Lethality, Endurance, Agility, Tactics, Perception.</li>
-                        <li><code class="text-cyan-300">player_telemetry</code>: Kills, Damage, Accuracy.</li>
-                        <li><code class="text-cyan-300">adaptive_tasks</code>: Dynamic quests and XP goals.</li>
-                    </ul>
-                </div>
-                <div class="flex-1 border border-red-500/30 bg-red-900/10 p-4 rounded-lg">
-                    <h3 class="text-xl text-red-400 mb-2 esports-font font-bold">22. Securing the Web (RLS)</h3>
-                    <p class="text-sm text-gray-300 mb-2">Because the web exposes API keys, enforce Postgres Row-Level Security (RLS) to prevent console tampering.</p>
-                    <code class="text-xs text-red-300 block bg-black p-2 rounded">CREATE POLICY "Deny client-side stat updates" ON player_stats FOR UPDATE USING (false);</code>
-                </div>
-            </div>
-
-            <!-- Slide 23 & 24 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl neon-cyan mb-4 esports-font border-l-4 border-cyan-400 pl-4">23-24. Edge Compute & Power Math</h3>
-                <p class="text-gray-300 mb-6">Cloudflare Worker <code>tournyx-web-scoring</code> receives telemetry POST requests. It calculates Power Level natively in JS under 15ms latency.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
-                    <div class="bg-[#090A0F] border border-gray-800 p-3 rounded">
-                        <span class="block text-purple-400 font-bold">Lethality (1.2)</span>
-                        <span class="text-xs text-gray-500">Headshots & Dmg</span>
-                    </div>
-                    <div class="bg-[#090A0F] border border-gray-800 p-3 rounded">
-                        <span class="block text-purple-400 font-bold">Endurance (1.0)</span>
-                        <span class="text-xs text-gray-500">Survival Time</span>
-                    </div>
-                    <div class="bg-[#090A0F] border border-gray-800 p-3 rounded">
-                        <span class="block text-purple-400 font-bold">Agility (1.1)</span>
-                        <span class="text-xs text-gray-500">Gloo Wall & CQC</span>
-                    </div>
-                    <div class="bg-[#090A0F] border border-gray-800 p-3 rounded">
-                        <span class="block text-purple-400 font-bold">Tactics (1.0)</span>
-                        <span class="text-xs text-gray-500">Assists & Revives</span>
-                    </div>
-                    <div class="bg-[#090A0F] border border-gray-800 p-3 rounded">
-                        <span class="block text-purple-400 font-bold">Perception (1.3)</span>
-                        <span class="text-xs text-gray-500">Sniper Accuracy</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Slide 25 to 29 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl text-white mb-6 esports-font border-l-4 border-gray-100 pl-4">25-29. AI Loop, RPC, and Loot Drops</h3>
-                <div class="space-y-6 text-gray-300">
-                    <div class="flex gap-4 items-start">
-                        <div class="w-8 h-8 rounded-full bg-cyan-900/50 border border-cyan-400 flex items-center justify-center text-cyan-400 font-bold shrink-0">1</div>
-                        <div>
-                            <strong class="text-white">Smart Task Generation:</strong> The Worker sorts 5 stats to find the lowest value, selects targeted practice (e.g. lowest Agility = Close Combat task), and inserts into database triggering WebSockets.
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-8 h-8 rounded-full bg-purple-900/50 border border-purple-500 flex items-center justify-center text-purple-400 font-bold shrink-0">2</div>
-                        <div>
-                            <strong class="text-white">Secure Reward Fulfillment (RPC):</strong> Remote Procedure Calls in Supabase distribute XP and Gold internally. Players cannot force rewards via browser console.
-                        </div>
-                    </div>
-                    <div class="flex gap-4 items-start">
-                        <div class="w-8 h-8 rounded-full bg-yellow-900/50 border border-yellow-500 flex items-center justify-center text-yellow-400 font-bold shrink-0">3</div>
-                        <div>
-                            <strong class="text-white">Hidden Quest RNG:</strong> Track win streaks. If <code>win_streak == 5</code>, auto-insert secret quest. A server-side RNG handles mystery crate drops (e.g. 80% XP boost, 5% Physical Merch).
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- SLIDE 9 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">The "Awakening" Animation</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li><strong class="text-white">Trigger:</strong> User clicks <code>[ OPEN SYSTEM ]</code> on home.html.</li>
+                <li><strong class="text-white">Action:</strong> A translucent modal (<code>backdrop-blur-xl</code>) locks the screen.</li>
+                <li><strong class="text-white">Sequence:</strong> A neon cyan bar fills 0% to 100% reading "SYSTEM INITIALIZING..." before revealing the HUD.</li>
+            </ul>
+            <div class="slide-number">09</div>
         </div>
 
-        <!-- Section 5 -->
-        <div class="mt-16 text-center mb-8">
-            <h2 class="text-3xl esports-font text-white border-b-2 border-purple-600 inline-block pb-2">SECTION 5: QA & SYSTEM ACTIVATION</h2>
+        <!-- SLIDE 10 -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-l-4 border-gray-100 pl-4">8-Module Engine Grid</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-lg font-bold">
+                <div class="bg-purple-900/30 p-6 rounded border border-purple-500/30">1. Player Analysis</div>
+                <div class="bg-purple-900/30 p-6 rounded border border-purple-500/30">2. Today's Tasks</div>
+                <div class="bg-purple-900/30 p-6 rounded border border-purple-500/30">3. AI Recs</div>
+                <div class="bg-purple-900/30 p-6 rounded border border-purple-500/30">4. Role & Training</div>
+                <div class="bg-cyan-900/30 p-6 rounded border border-cyan-500/30">5. Player Evolution</div>
+                <div class="bg-cyan-900/30 p-6 rounded border border-cyan-500/30">6. Wallet</div>
+                <div class="bg-cyan-900/30 p-6 rounded border border-cyan-500/30">7. Hidden Quests</div>
+                <div class="bg-cyan-900/30 p-6 rounded border border-cyan-500/30">8. System Log</div>
+            </div>
+            <div class="slide-number">10</div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-            <!-- Slide 30-33 -->
-            <div class="slide-container bg-[#12141D] glow-border rounded-xl p-8">
-                <h3 class="text-2xl neon-cyan mb-4 esports-font border-l-4 border-cyan-400 pl-4">30-33. Benchmarks & Anti-Cheat</h3>
-                <ul class="space-y-3 text-gray-300">
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Cloudflare Worker Latency &lt; 15ms.</li>
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> CSS Animations run at stable 60 FPS.</li>
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Rate Limits: Block impossible data spikes (e.g. 50 headshots / 1m).</li>
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Strict check: Root entry is strictly <code>home.html</code>.</li>
-                </ul>
-            </div>
+        <!-- SLIDE 11 -->
+        <div class="slide items-center text-center">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8">Radar Chart Integration</h2>
+            <p class="text-2xl text-gray-300 max-w-4xl leading-relaxed">Team 3 will integrate Chart.js into home.html. Configure the Radar Chart to have a transparent background, neon purple web lines, and a cyan fill for the player's polygon.</p>
+            <div class="slide-number">11</div>
+        </div>
 
-            <!-- Slide 34-35 -->
-            <div class="slide-container bg-gradient-to-br from-[#12141D] to-[#1a103c] glow-border rounded-xl p-8 relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-40 h-40 bg-purple-600/20 blur-3xl rounded-full"></div>
-                <h3 class="text-2xl text-white mb-4 esports-font border-l-4 border-purple-500 pl-4 relative z-10">34-35. Activation Sign-Off</h3>
-                <p class="text-gray-300 text-sm mb-4 relative z-10">Inject established team profiles (<strong>Warhero Xeron</strong> members) to verify leaderboards before global launch.</p>
-                <div class="bg-black/40 p-4 rounded-lg border border-purple-500/30 relative z-10">
-                    <p class="text-cyan-400 font-bold mb-1">1. Team Leaders:</p>
-                    <p class="text-xs text-gray-400 mb-3">Confirm code pushed to main GitHub branch.</p>
-                    <p class="text-cyan-400 font-bold mb-1">2. Domain Officer:</p>
-                    <p class="text-xs text-gray-400 mb-3">Verifies web endpoints routing correctly.</p>
-                    <p class="text-purple-400 font-bold mb-1">3. CEO:</p>
-                    <p class="text-xs text-gray-400">Triggers global DNS switch.</p>
-                </div>
-                <div class="mt-6 text-center w-full py-2 bg-purple-600/20 border border-purple-500/50 rounded text-purple-300 font-bold tracking-widest relative z-10">
-                    STATUS: ENGINE IS LIVE
-                </div>
+        <!-- SLIDE 12 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Team Handoff Prep</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">Before handing off to Team 1, ensure all dynamic HTML elements have clear IDs. For example: <code>&lt;span id="power-level-display"&gt;</code>. This allows Team 1 to easily inject live database numbers.</p>
+            <div class="slide-number">12</div>
+        </div>
+
+        <!-- SLIDE 13 (Team 1 Focus) -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-b-2 border-cyan-500 pb-2 inline-block">PHASE 2: TEAM 1 WEB LOGIC</h2>
+            <h3 class="text-3xl neon-text-cyan title-font mb-6">JS & React Initialization</h3>
+            <p class="text-2xl text-gray-300 leading-relaxed">Team 1 will bring the static UI to life. Install <code>@supabase/supabase-js</code>. Objective: Ensure the web page never requires a hard reload when stats change.</p>
+            <div class="slide-number">13</div>
+        </div>
+
+        <!-- SLIDE 14 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Native Web Auth</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li><strong class="text-white">Method:</strong> Utilize Supabase Auth natively in the browser.</li>
+                <li><strong class="text-white">Connection:</strong> Attach the login API call to Team 3's button.</li>
+                <li><strong class="text-white">Security:</strong> Store JWT in HTTP-only cookies to persist sessions securely.</li>
+            </ul>
+            <div class="slide-number">14</div>
+        </div>
+
+        <!-- SLIDE 15 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Supabase WebSockets</h2>
+            <div class="bg-black/50 border border-gray-700 p-8 rounded-lg">
+                <p class="text-2xl text-gray-300 mb-4">Configure a WebSocket listener on the <code>player_stats</code> table.</p>
+                <code class="text-xl text-cyan-400 block bg-black p-4 rounded">supabase.channel('public:player_stats').on('postgres_changes'...</code>
             </div>
+            <div class="slide-number">15</div>
+        </div>
+
+        <!-- SLIDE 16 -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-l-4 border-gray-100 pl-4">Live Radar Animation</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed mb-6">Map the incoming WebSocket payload directly to the Chart.js instance.</p>
+            <p class="text-2xl text-gray-300 leading-relaxed">Write logic so that if the new stat is higher than the old stat, the corresponding HTML text flashes neon green.</p>
+            <div class="slide-number">16</div>
+        </div>
+
+        <!-- SLIDE 17 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Role Selection State</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">When a player clicks a new role tab (e.g., from Rusher to Sniper), JS intercepts the click, sends a fast PATCH request to backend, clears the "Today's Tasks" DOM, and maps Sniper tasks seamlessly.</p>
+            <div class="slide-number">17</div>
+        </div>
+
+        <!-- SLIDE 18 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Web Push Notifications</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li>Request browser notification permissions on first login.</li>
+                <li>Listen for Urgent Quests via WebSocket.</li>
+                <li>Trigger native alert: <span class="text-cyan-400 font-bold">"🚨 URGENT QUEST: Your Aim dropped. Secure 10 Headshots."</span></li>
+            </ul>
+            <div class="slide-number">18</div>
+        </div>
+
+        <!-- SLIDE 19 -->
+        <div class="slide items-center text-center">
+            <h2 class="text-4xl text-yellow-400 title-font mb-8">Hidden Quest Event UI</h2>
+            <p class="text-2xl text-gray-300 max-w-4xl leading-relaxed">When JS detects <code>hidden_quest_unlocked = true</code>, inject a CSS animation class into the DOM that causes a Golden Loot Crate icon to flash aggressively on the screen.</p>
+            <div class="slide-number">19</div>
+        </div>
+
+        <!-- SLIDE 20 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Offline State Handling</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">If the player's web connection drops, cache their current HUD state in <code>localStorage</code> and display a subtle "Reconnecting to System..." banner at the top of the HUD.</p>
+            <div class="slide-number">20</div>
+        </div>
+
+        <!-- SLIDE 21 (Team 2 Focus) -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-b-2 border-purple-600 pb-2 inline-block">PHASE 3: TEAM 2 BACKEND</h2>
+            <h3 class="text-3xl neon-text-cyan title-font mb-6">Supabase PostgreSQL Schema</h3>
+            <ul class="text-2xl text-gray-300 space-y-4">
+                <li><code>profiles</code>: Username, Rank, Power Level.</li>
+                <li><code>player_stats</code>: Lethality, Endurance, Agility, Tactics, Perception.</li>
+                <li><code>player_telemetry</code>: Kills, Damage, Accuracy.</li>
+                <li><code>adaptive_tasks</code>: Dynamic quests and XP.</li>
+            </ul>
+            <div class="slide-number">21</div>
+        </div>
+
+        <!-- SLIDE 22 -->
+        <div class="slide">
+            <h2 class="text-4xl text-red-500 title-font mb-8 border-l-4 border-red-500 pl-4">Securing the Web (RLS)</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed mb-6">Web browsers expose API keys. Enforce Postgres Row-Level Security to prevent console tampering.</p>
+            <code class="text-xl text-red-300 block bg-black p-6 rounded">CREATE POLICY "Deny client-side stat updates" ON player_stats FOR UPDATE USING (false);</code>
+            <div class="slide-number">22</div>
+        </div>
+
+        <!-- SLIDE 23 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Cloudflare Edge Workers</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li>Create Worker named <code>tournyx-web-scoring</code>.</li>
+                <li>Receives match telemetry POST requests directly from the browser.</li>
+                <li>Operates across 330+ global cities for <15ms latency.</li>
+            </ul>
+            <div class="slide-number">23</div>
+        </div>
+
+        <!-- SLIDE 24 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Power Level Math: Offense</h2>
+            <div class="bg-black/50 p-8 rounded-lg border border-cyan-500/30 text-2xl text-gray-300 space-y-6">
+                <p><strong class="text-cyan-400">Lethality (w: 1.2):</strong> Calculated from Headshots & Damage.</p>
+                <p><strong class="text-cyan-400">Perception (w: 1.3):</strong> Calculated from Sniper Accuracy and First-Shot Success.</p>
+            </div>
+            <div class="slide-number">24</div>
+        </div>
+
+        <!-- SLIDE 25 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Power Level Math: Defense</h2>
+            <div class="bg-black/50 p-8 rounded-lg border border-purple-500/30 text-2xl text-gray-300 space-y-6">
+                <p><strong class="text-purple-400">Endurance (w: 1.0):</strong> Calculated from Survival Time.</p>
+                <p><strong class="text-purple-400">Agility (w: 1.1):</strong> Calculated from Gloo Wall deployment speed.</p>
+                <p><strong class="text-purple-400">Tactics (w: 1.0):</strong> Calculated from Assists & Revives.</p>
+            </div>
+            <div class="slide-number">25</div>
+        </div>
+
+        <!-- SLIDE 26 -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-l-4 border-gray-100 pl-4">Smart Task Algorithm</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">The Cloudflare Worker sorts the 5 stats to find the absolute lowest value. It automatically selects a targeted practice task (e.g., if Agility is lowest, issue a Close Combat task) and inserts it into the DB.</p>
+            <div class="slide-number">26</div>
+        </div>
+
+        <!-- SLIDE 27 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Role Mastery Pathways</h2>
+            <ul class="text-2xl text-gray-300 space-y-4">
+                <li><strong class="text-white">Rusher:</strong> Tasks focus on SMG/Shotgun data.</li>
+                <li><strong class="text-white">Sniper:</strong> Tasks focus on long-range damage.</li>
+                <li><strong class="text-white">Support:</strong> Tasks focus on utility and revives.</li>
+                <li><strong class="text-white">IGL:</strong> Tasks focus on squad placement.</li>
+            </ul>
+            <div class="slide-number">27</div>
+        </div>
+
+        <!-- SLIDE 28 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Secure Reward Fulfillment (RPC)</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">Players cannot simply tell the database "Give me 1000 Gold" via the browser console. Write secure SQL Remote Procedure Calls (RPC). The server verifies task completion and distributes XP internally.</p>
+            <div class="slide-number">28</div>
+        </div>
+
+        <!-- SLIDE 29 -->
+        <div class="slide items-center text-center">
+            <h2 class="text-4xl text-yellow-400 title-font mb-8">Mystery Loot Box RNG</h2>
+            <p class="text-2xl text-gray-300 max-w-4xl leading-relaxed">When a user opens a crate on the web, a request goes to the Edge Worker. A secure server-side Random Number Generator dictates the drop (e.g., 80% XP boost, 15% Digital Avatar Frame, 5% Physical Merch).</p>
+            <div class="slide-number">29</div>
+        </div>
+
+        <!-- SLIDE 30 -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-l-4 border-gray-100 pl-4">Hidden Quest Triggers</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed mb-6">Track consecutive win streaks during telemetry processing in the Cloudflare Worker.</p>
+            <p class="text-2xl text-gray-300 leading-relaxed">If <code>win_streak == 5</code>, the script automatically inserts a highly rewarding secret quest into the user's database row.</p>
+            <div class="slide-number">30</div>
+        </div>
+
+        <!-- SLIDE 31 (Integration) -->
+        <div class="slide items-center text-center">
+            <h2 class="text-4xl text-white title-font mb-8 border-b-2 border-cyan-500 pb-2 inline-block">PHASE 4: INTEGRATION</h2>
+            <h3 class="text-3xl neon-text-cyan title-font mb-6">Unifying the Platform</h3>
+            <p class="text-2xl text-gray-300 leading-relaxed max-w-3xl">Team 3's HTML UI Structure + Team 1's React Logic + Team 2's Supabase Backend = A flawless, single-page Web Engine.</p>
+            <div class="slide-number">31</div>
+        </div>
+
+        <!-- SLIDE 32 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Anti-Cheat & Rate Limiting</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li><strong class="text-white">Telemetry Verification:</strong> Block impossible data spikes (e.g., 50 headshots in 1 minute).</li>
+                <li><strong class="text-white">Rate Limits:</strong> Configure Cloudflare to limit uploads to 1 request per 5 minutes per IP.</li>
+            </ul>
+            <div class="slide-number">32</div>
+        </div>
+
+        <!-- SLIDE 33 -->
+        <div class="slide">
+            <h2 class="text-4xl text-green-400 title-font mb-8 border-l-4 border-green-500 pl-4">QA Benchmarks</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li>✅ Cloudflare Worker Latency < 15ms.</li>
+                <li>✅ CSS Animations & Chart.js run at a stable 60 FPS.</li>
+                <li>✅ RLS fully blocks client-side console tampering.</li>
+            </ul>
+            <div class="slide-number">33</div>
+        </div>
+
+        <!-- SLIDE 34 -->
+        <div class="slide">
+            <h2 class="text-4xl text-red-500 title-font mb-8 border-l-4 border-red-500 pl-4">Strict Routing Check</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">Final verification that the Cloudflare Pages deployment is strictly hosting <code>home.html</code> as the root entry point, with zero index.html conflicts.</p>
+            <div class="slide-number">34</div>
+        </div>
+
+        <!-- SLIDE 35 (Data Injection) -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-b-2 border-purple-600 pb-2 inline-block">PHASE 5: LAUNCH</h2>
+            <h3 class="text-3xl neon-text-purple title-font mb-6">Database Migration & Mocks</h3>
+            <p class="text-2xl text-gray-300 leading-relaxed mb-4">Inject established profiles to verify leaderboards.</p>
+            <ul class="text-xl text-gray-400 space-y-2 font-bold font-mono">
+                <li>> INSERT INTO profiles: 'WH King'</li>
+                <li>> INSERT INTO profiles: 'WH Tyson'</li>
+            </ul>
+            <div class="slide-number">35</div>
+        </div>
+
+        <!-- SLIDE 36 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Team Affiliation Checks</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed mb-4">Verify team data renders correctly in the UI.</p>
+            <ul class="text-xl text-gray-400 space-y-2 font-bold font-mono">
+                <li>> INSERT INTO profiles: 'WH Dany'</li>
+                <li>> VERIFY TEAM Roster: 'Warhero Xeron'</li>
+                <li class="text-green-400">> STATUS: Roster Synced.</li>
+            </ul>
+            <div class="slide-number">36</div>
+        </div>
+
+        <!-- SLIDE 37 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-purple title-font mb-8 border-l-4 border-purple-500 pl-4">Pre-Launch Checklist</h2>
+            <ul class="text-2xl text-gray-300 space-y-6">
+                <li>Database locked to production keys.</li>
+                <li>WebSockets connected to wss:// endpoints.</li>
+                <li>Cloudflare Pages cache cleared.</li>
+            </ul>
+            <div class="slide-number">37</div>
+        </div>
+
+        <!-- SLIDE 38 -->
+        <div class="slide">
+            <h2 class="text-4xl text-white title-font mb-8 border-l-4 border-gray-100 pl-4">DNS Routing</h2>
+            <p class="text-2xl text-gray-300 leading-relaxed">Map the Tournyx domain to the Cloudflare Pages deployment. Ensure SSL certificates are active for secure WebSocket connections.</p>
+            <div class="slide-number">38</div>
+        </div>
+
+        <!-- SLIDE 39 -->
+        <div class="slide">
+            <h2 class="text-4xl neon-text-cyan title-font mb-8 border-l-4 border-cyan-400 pl-4">Final Sign-Off</h2>
+            <div class="bg-black/50 p-8 rounded-lg border border-gray-700 text-2xl text-gray-300 space-y-6">
+                <p><strong class="text-white">1. Team Leaders:</strong> Confirm code is pushed to main.</p>
+                <p><strong class="text-white">2. Domain Officer:</strong> Verifies web endpoints.</p>
+                <p><strong class="text-white">3. CEO:</strong> Approves the launch sequence.</p>
+            </div>
+            <div class="slide-number">39</div>
+        </div>
+
+        <!-- SLIDE 40 -->
+        <div class="slide items-center text-center">
+            <div class="w-full h-full flex flex-col items-center justify-center border-4 border-purple-500/50 rounded-xl bg-purple-900/10">
+                <h3 class="text-2xl text-gray-400 tracking-widest uppercase mb-4 title-font">Initialization Complete</h3>
+                <h1 class="text-7xl font-black text-white mb-6 uppercase tracking-widest neon-text-purple title-font">SYSTEM ACTIVE</h1>
+                <p class="text-2xl text-cyan-400 title-font">Welcome to Tournyx Engine 2.0</p>
+            </div>
+            <div class="slide-number">40</div>
         </div>
 
     </div>
 
-    <!-- Script for PDF Generation -->
-    <script>
-        function generatePDF() {
-            // Hide the download button so it doesn't appear in the PDF
-            const btn = document.getElementById('action-buttons');
-            btn.style.display = 'none';
-
-            const element = document.getElementById('presentation-content');
-            
-            const opt = {
-                margin:       [10, 0, 10, 0],
-                filename:     'Tournyx_Engine_2.0_Master_Blueprint.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true, logging: false, backgroundColor: '#090A0F' },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            // Generate PDF and then restore the button
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.style.display = 'block';
-            });
-        }
-    </script>
 </body>
 </html>
