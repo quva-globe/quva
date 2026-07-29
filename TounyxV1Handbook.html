@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournyx Engineering Handbook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --cyan: #00f2ff;
+            --purple: #bd00ff;
+            --dark: #110822;
+            --gray: #f4f6f9;
+        }
+        @page { size: 16in 9in; margin: 0; }
+        body { 
+            font-family: 'Rajdhani', sans-serif; 
+            background: #e9ecef; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 40px; 
+        }
+        .slide {
+            width: 1536px; 
+            height: 864px;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border-top: 10px solid var(--purple);
+            border-bottom: 10px solid var(--cyan);
+            page-break-after: always;
+        }
+        .slide::before {
+            content: ''; position: absolute; left: 0; top: 0; width: 10px; height: 100%; 
+            background: linear-gradient(to bottom, var(--purple), var(--cyan));
+        }
+        .slide::after {
+            content: ''; position: absolute; right: 0; top: 0; width: 10px; height: 100%; 
+            background: linear-gradient(to bottom, var(--purple), var(--cyan));
+        }
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; color: var(--dark); margin-top: 0; text-transform: uppercase; }
+        p, li { font-size: 1.3rem; color: #444; line-height: 1.6; }
+        
+        .title-slide { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; }
+        .title-slide h1 { font-size: 4.5rem; background: linear-gradient(90deg, var(--purple), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
+        .title-slide h2 { font-size: 2.2rem; color: #555; }
+        
+        .header-row { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid var(--gray); padding-bottom: 15px; margin-bottom: 30px; }
+        .header-row h2 { font-size: 2.5rem; margin: 0; }
+        .logo-mark { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #ccc; font-size: 1.5rem; }
+
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; height: 80%; }
+        .text-col { display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        .image-col { display: flex; flex-direction: column; gap: 20px; align-items: center; justify-content: center; background: var(--gray); padding: 20px; border-radius: 16px; border: 2px dashed #ddd;}
+        .image-col img { width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #ccc; }
+        
+        .badge { background: rgba(0, 242, 255, 0.1); color: #008b94; padding: 5px 15px; border-radius: 8px; font-weight: bold; border: 1px solid var(--cyan); display: inline-block; font-family: 'Orbitron', sans-serif; }
+        .badge-purple { background: rgba(189, 0, 255, 0.1); color: #7800a3; border-color: var(--purple); }
+
+        .task-card { background: #fff; border: 1px solid #ddd; border-left: 6px solid var(--purple); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .task-card h3 { margin-bottom: 10px; font-size: 1.5rem; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 1.2rem; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: var(--gray); font-family: 'Orbitron', sans-serif; color: var(--dark); }
+
+        @media print {
+            body { padding: 0; background: #fff; display: block; }
+            .slide { box-shadow: none; margin: 0; width: 16in; height: 9in; page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide title-slide">
+        <div style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: #888; margin-bottom: 20px; letter-spacing: 5px;">QUVA TECHNOLOGIES PRESENTS</div>
+        <h1>TOURNYX ESPORTS</h1>
+        <h2>Master Engineering & Execution Handbook v1.0</h2>
+        <p style="font-size: 1.5rem; color: #666; margin-top: 40px; max-width: 800px;">Standard Operating Procedures, Technical Roadmaps, and Infrastructure Mandates for the Pan-India Launch.</p>
+        <div style="margin-top: 50px; display: flex; gap: 20px;">
+            <span class="badge">Target Launch: August 8, 2026</span>
+            <span class="badge badge-purple">Confidential & Internal</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: INFRASTRUCTURE & DB -->
+    <div class="slide">
+        <div class="header-row">
+            <h2>1. Database Architecture & Health</h2>
+            <div class="logo-mark">QUVA / TECH</div>
+        </div>
+        <div class="content-grid">
+            <div class="text-col">
+                <span class="badge">Supabase Integration</span>
+                <p><strong>Objective:</strong> Completely deprecate legacy AppScript and Google Sheets in favor of a robust, scalable PostgreSQL backend via Supabase.</p>
+                <ul>
+                    <li><strong>Status Verification:</strong> Database is currently healthy with high success rates.</li>
+                    <li><strong>Action Required (Shiva & Surya):</strong> As per Supabase Advisor, fix Critical Security warnings. Enable <b>Row Level Security (RLS)</b> immediately on public tables.</li>
+                    <li><strong>Table Management:</strong> Ensure the `Users` table flawlessly tracks ELO/Skill Points generated by the Vision AI.</li>
+                </ul>
+                <div class="task-card">
+                    <h3>TED-005: Security Hardening</h3>
+                    <p><b>Goal:</b> Lock down APIs. Prevent SQL injection.<br><b>Action:</b> Toggle RLS on `tournaments` and `Users`.</p>
+                </div>
+            </div>
+            <div class="image-col">
+                <img src="1000152985.jpg" alt="Supabase Dashboard">
+                <img src="1000152986.jpg" alt="Supabase Table Editor">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: EDGE ROUTING -->
+    <div class="slide">
+        <div class="header-row">
+            <h2>2. Cloudflare Edge Network</h2>
+            <div class="logo-mark">QUVA / INFRA</div>
+        </div>
+        <div class="content-grid">
+            <div class="text-col">
+                <span class="badge badge-purple">Cloudflare Workers & CDN</span>
+                <p><strong>Objective:</strong> Ensure Zero-Latency load balancing for Indian traffic and secure our domain routing.</p>
+                <ul>
+                    <li><strong>Worker Routes:</strong> Verify `tournyx.in/*` and `/api/*` are mapped to the correct serverless functions.</li>
+                    <li><strong>Caching Strategy:</strong> Maintain >55% cached traffic to reduce Supabase read/write exhaustion.</li>
+                    <li><strong>DDoS Protection:</strong> Implement WAF rate-limiting rules prior to August 6th testing window.</li>
+                </ul>
+                <div class="task-card">
+                    <h3>SOP-011: Edge Security</h3>
+                    <p><b>Officer:</b> Surya Prakash<br><b>Action:</b> Setup anti-bot shields on `1000152990.jpg` routes to protect login endpoints.</p>
+                </div>
+            </div>
+            <div class="image-col">
+                <img src="1000152988.jpg" alt="Cloudflare Analytics">
+                <img src="1000152990.jpg" alt="Cloudflare Workers Routes">
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: CTO & LEAD DEV MANDATES -->
+    <div class="slide">
+        <div class="header-row">
+            <h2>3. Engineering Leadership Mandates</h2>
+            <div class="logo-mark">QUVA / DEV</div>
+        </div>
+        <div class="content-grid" style="grid-template-columns: 1fr;">
+            <div class="text-col">
+                <table style="margin-top:0;">
+                    <tr>
+                        <th>Officer</th>
+                        <th>Core Responsibility</th>
+                        <th>August 8 Target</th>
+                    </tr>
+                    <tr>
+                        <td><b>Shiva Kumar (CTO)</b></td>
+                        <td>Infrastructure, Billing, CI/CD, App Wrapping</td>
+                        <td>Monitor Supabase Billing (`1000152987.jpg`). Package Web to Android APK/iOS IPA via Capacitor JS. Fix API timeouts.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Rajesh Kumar (Lead Dev)</b></td>
+                        <td>UI/UX, WebRTC Voice, Vision AI Logic</td>
+                        <td>Finalize GitHub Archive structure (`1000152992.jpg`). Wire up the Solo Leveling algorithm. Ensure zero CSS overflow on mobile.</td>
+                    </tr>
+                    <tr>
+                        <td><b>Surya Prakash (CCSO)</b></td>
+                        <td>Anti-Cheat, RLS, WAF Configuration</td>
+                        <td>Clear critical RLS warnings in Supabase. Prevent Vision AI spoofing.</td>
+                    </tr>
+                </table>
+
+                <div style="display: flex; gap: 20px; margin-top: 30px;">
+                    <div class="image-col" style="flex: 1; padding: 10px; background: transparent; border: none;">
+                        <img src="1000152992.jpg" style="max-height: 200px;" alt="GitHub Repository">
+                        <div style="text-align: center; font-size: 0.9rem; font-weight: bold;">Maintain strict commit rules on Tournyx-Archive</div>
+                    </div>
+                    <div class="image-col" style="flex: 1; padding: 10px; background: transparent; border: none;">
+                        <img src="1000152987.jpg" style="max-height: 200px;" alt="Billing">
+                        <div style="text-align: center; font-size: 0.9rem; font-weight: bold;">Manage Cost Controls & Scaling Quotas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: OPERATIONS & LAUNCH -->
+    <div class="slide">
+        <div class="header-row">
+            <h2>4. Operations & Global Launch Protocol</h2>
+            <div class="logo-mark">QUVA / OPS</div>
+        </div>
+        <div class="content-grid">
+            <div class="text-col">
+                <span class="badge">Agile Delivery</span>
+                <p><strong>Tharun Kumar (HR & Tech Ops):</strong></p>
+                <ul>
+                    <li>Secure Apple D-U-N-S Number and Google Play Developer accounts immediately.</li>
+                    <li>Enforce the 15-minute daily standup. Ensure all interns use the GitHub PR staging pipeline.</li>
+                </ul>
+                <p><strong>Umesh Sharma (Media & Marketing):</strong></p>
+                <ul>
+                    <li>Prepare App Store screenshots and ASO descriptions.</li>
+                    <li>Launch "Solo Leveling" marketing campaign on regional pages (e.g., Tamil FF Max).</li>
+                </ul>
+            </div>
+            <div class="text-col">
+                <div class="task-card" style="height: 100%;">
+                    <h3 style="color: var(--cyan);">Daily Reporting Format</h3>
+                    <p style="font-size: 1.1rem; line-height: 1.8;">
+                        <b>Submit at 6:00 PM IST:</b><br>
+                        1. Today's Goal:<br>
+                        2. Completed:<br>
+                        3. Pending:<br>
+                        4. Blockers (e.g., waiting on Cloudflare caching `1000152989.jpg`):<br>
+                        5. Need Help From:<br>
+                        6. GitHub Commit Link:
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
